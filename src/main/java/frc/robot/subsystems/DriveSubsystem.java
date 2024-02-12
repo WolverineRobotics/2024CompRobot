@@ -23,6 +23,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.*;
 import com.ctre.phoenix6.hardware.Pigeon2;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
 public class DriveSubsystem extends SubsystemBase {
 
@@ -31,7 +35,7 @@ public class DriveSubsystem extends SubsystemBase {
   public static DifferentialDriveOdometry m_odometry;
   // public static DifferentialDrivePoseEstimator --- maybe use later
   private Pigeon2 m_gyro;
-  private Encoder leftEncoder, rightEncoder;
+  private RelativeEncoder leftEncoder, rightEncoder;
   private Pose2d start_pose;
 
   private double track_width = 28;
@@ -43,21 +47,23 @@ public class DriveSubsystem extends SubsystemBase {
   public DriveSubsystem() {
 
     /* Setup base drivetrain */ 
-    WPI_TalonSRX _leftFollower = new WPI_TalonSRX(Constants.LEFT_MOTOR_1);
-    WPI_VictorSPX _leftMaster = new WPI_VictorSPX(Constants.LEFT_MOTOR_2);
-    WPI_TalonSRX _rightFollower = new WPI_TalonSRX(Constants.RIGHT_MOTOR_1);
-    WPI_TalonSRX _rightMaster = new WPI_TalonSRX(Constants.RIGHT_MOTOR_2);
+    CANSparkMax _leftFollower = new CANSparkMax(Constants.LEFT_MOTOR_1, MotorType.kBrushless);
+    CANSparkMax _leftMaster = new CANSparkMax(Constants.LEFT_MOTOR_2, MotorType.kBrushless);
+    CANSparkMax _rightFollower = new CANSparkMax(Constants.RIGHT_MOTOR_1, MotorType.kBrushless);
+    CANSparkMax _rightMaster = new CANSparkMax(Constants.RIGHT_MOTOR_2, MotorType.kBrushless);
     
     _leftFollower.follow(_leftMaster);
     _rightFollower.follow(_rightMaster);
     
-    _leftFollower.setInverted(InvertType.FollowMaster);
-    _rightFollower.setInverted(InvertType.FollowMaster);
+    // _leftFollower.setInverted(InvertType.FollowMaster);
+    // _rightFollower.setInverted(InvertType.FollowMaster);
+    _rightMaster.setInverted(true);
+    _rightFollower.setInverted(true);
     
-    _leftFollower.setNeutralMode(NeutralMode.Brake);
-    _leftMaster.setNeutralMode(NeutralMode.Brake);
-    _rightFollower.setNeutralMode(NeutralMode.Brake);
-    _rightMaster.setNeutralMode(NeutralMode.Brake);
+    _leftFollower.setIdleMode(IdleMode.kBrake);
+    _leftMaster.setIdleMode(IdleMode.kBrake);
+    _rightFollower.setIdleMode(IdleMode.kBrake);
+    _rightMaster.setIdleMode(IdleMode.kBrake);
     
     driveTrain = new DifferentialDrive(_leftMaster, _rightMaster);
     driveTrain.setSafetyEnabled(false);
@@ -76,11 +82,11 @@ public class DriveSubsystem extends SubsystemBase {
     m_gyro.reset();
 
     // Unsure if integrated on victors and talons
-    leftEncoder = new Encoder(null, null);
-    rightEncoder = new Encoder(null, null);
+    leftEncoder = _rightMaster.getEncoder();
+    rightEncoder = _rightMaster.getEncoder();
 
-    leftEncoder.reset();
-    rightEncoder.reset();
+    leftEncoder.setPosition(0);
+    rightEncoder.setPosition(0);
 
     // leftEncoder.setDistancePerPulse();
     // rightEncoder.setDistancePerPulse();
@@ -93,7 +99,7 @@ public class DriveSubsystem extends SubsystemBase {
       m_gyro.getRotation2d()
     );
 
-    m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d(), leftEncoder.getDistance(), rightEncoder.getDistance(), start_pose);
+    m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition(), start_pose);
   }
   
   // public void setDeadband(){
@@ -126,7 +132,7 @@ public class DriveSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    m_odometry.update(m_gyro.getRotation2d(), leftEncoder.getDistance(), rightEncoder.getDistance());
+    m_odometry.update(m_gyro.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition());
   }
 
   /* Came with the template */
