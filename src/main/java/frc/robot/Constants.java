@@ -6,10 +6,13 @@ package frc.robot;
 
 public final class Constants {
   
-  public static final int LEFT_MOTOR_1 = 6;
-  public static final int LEFT_MOTOR_2 = 5;
-  public static final int RIGHT_MOTOR_1 = 4;
+  public static final int LEFT_MOTOR_1 = 2; // Left Side (Behind the Battery (bumpers!!!!))
+  public static final int LEFT_MOTOR_2 = 4;
+  public static final int RIGHT_MOTOR_1 = 1; // Right Side (Behind the Battery (bumpers!!!!))
   public static final int RIGHT_MOTOR_2 = 3;
+
+  public static final int PIGEON_ID = 3;
+
   public static final double X_SPEEDREDUCTION = 0.6;
   public static final double Y_SPEED_REDUCTION = 0.5;
   public static final double DEADBAND_CONST = 0.05;
@@ -18,16 +21,16 @@ public final class Constants {
 
     /* Controller ports */
     public static final int kDriverControllerPort = 0;
-    public static final int kOperatorControllerPort = 0;
+    public static final int kOperatorControllerPort = 1;
     
     /* CAN ID constants */
-    public static final int kPigeonId = 0;
+    public static final int kPigeonId = 3;
     
-    public static final int kLeftMotor1 = 1;
-    public static final int kLeftMotor2 = 2; 
+    public static final int kLeftMotor1 = 0; // Left Side (Behind the Battery (bumpers!!!!))
+    public static final int kLeftMotor2 = 0; 
     
-    public static final int kRightMotor1 = 3;
-    public static final int kRightMotor2 = 4;
+    public static final int kRightMotor1 = 0; // Right Side (Behind the Battery (bumpers!!!!))
+    public static final int kRightMotor2 = 0;
 
     public static final int kLeftMotorEncoder_A = 5; 
     public static final int kLeftMotorEncoder_B = 6;

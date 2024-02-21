@@ -19,9 +19,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 public class RobotContainer {
 
   private DriveSubsystem m_drive = new DriveSubsystem();
-  private LimelightSubsystem m_limelight = new LimelightSubsystem();
+  // private LimelightSubsystem m_limelight = new LimelightSubsystem();
   private Command m_drivecommand = new DefaultDriveCommand(m_drive);
-  private Command m_limelightCommand = new LimelightAlignCommand(m_drive, m_limelight);
+  // private Command m_limelightCommand = new LimelightAlignCommand(m_drive, m_limelight);
   
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
@@ -29,12 +29,11 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
-    m_drive = new DriveSubsystem();
     m_drivecommand = new DefaultDriveCommand(m_drive);
 
     CommandScheduler.getInstance().setDefaultCommand(m_drive, m_drivecommand);
-    CameraServer.startAutomaticCapture();
-    configureBindings();
+    // CameraServer.startAutomaticCapture();
+    // configureBindings();
   }
 
   private void configureBindings() {
@@ -49,7 +48,7 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     // return Autos.exampleAuto(m_drive);
-    return m_limelightCommand;
+    return null;
   }
   
 }

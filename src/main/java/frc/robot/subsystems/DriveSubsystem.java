@@ -5,6 +5,8 @@
 package frc.robot.subsystems;
 import frc.robot.Constants;
 import frc.robot.Input;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.estimator.PoseEstimator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -25,6 +27,7 @@ import com.ctre.phoenix.motorcontrol.can.*;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
@@ -36,63 +39,83 @@ public class DriveSubsystem extends SubsystemBase {
   // public static DifferentialDrivePoseEstimator --- maybe use later
   private Pigeon2 m_gyro;
   private RelativeEncoder leftEncoder, rightEncoder;
-  private Pose2d start_pose;
+  //private SparkAbsoluteEncoder leftEncoder1, rightEncoder1;
+  //private final Encoder _l = 
+  private Pose2d start_pose, m_pose;
 
-  private double track_width = 28;
-  private double wheel_radius = 6;
+  private CANSparkMax _leftMaster;//= new CANSparkMax(Constants.LEFT_MOTOR_1, MotorType.kBrushless);
+  private CANSparkMax _rightMaster;// = new CANSparkMax(Constants.RIGHT_MOTOR_1, MotorType.kBrushless);
+
+  private double track_width = 25;
+  private double wheel_radius = 3;
   private double wheel_radius_metres = Units.inchesToMeters(wheel_radius);
 
+  private final PIDController left_pid = new PIDController(0.1, 0.03, 0.05);
+  private final PIDController right_pid = new PIDController(0.1, 0.03, 0.05);
+  private final RamseteController m_RamseteController = new RamseteController();
+
   private SlewRateLimiter slew;
+
 
   public DriveSubsystem() {
 
     /* Setup base drivetrain */ 
-    CANSparkMax _leftFollower = new CANSparkMax(Constants.LEFT_MOTOR_1, MotorType.kBrushless);
-    CANSparkMax _leftMaster = new CANSparkMax(Constants.LEFT_MOTOR_2, MotorType.kBrushless);
-    CANSparkMax _rightFollower = new CANSparkMax(Constants.RIGHT_MOTOR_1, MotorType.kBrushless);
-    CANSparkMax _rightMaster = new CANSparkMax(Constants.RIGHT_MOTOR_2, MotorType.kBrushless);
+    // CANSparkMax _leftFollower = new CANSparkMax(Constants.LEFT_MOTOR_1, MotorType.kBrushless);
+    _leftMaster = new CANSparkMax(Constants.LEFT_MOTOR_1, MotorType.kBrushless);
+    // CANSparkMax _rightFollower = new CANSparkMax(Constants.RIGHT_MOTOR_1, MotorType.kBrushless);
+    _rightMaster = new CANSparkMax(Constants.RIGHT_MOTOR_1, MotorType.kBrushless);
     
-    _leftFollower.follow(_leftMaster);
-    _rightFollower.follow(_rightMaster);
+    // _leftFollower.follow(_leftMaster);
+    // _rightFollower.follow(_rightMaster);
     
     // _leftFollower.setInverted(InvertType.FollowMaster);
     // _rightFollower.setInverted(InvertType.FollowMaster);
     _rightMaster.setInverted(true);
-    _rightFollower.setInverted(true);
+    _leftMaster.setInverted(true);
     
-    _leftFollower.setIdleMode(IdleMode.kBrake);
     _leftMaster.setIdleMode(IdleMode.kBrake);
-    _rightFollower.setIdleMode(IdleMode.kBrake);
     _rightMaster.setIdleMode(IdleMode.kBrake);
+    
+    // _leftFollower.setIdleMode(IdleMode.kBrake);
+    // _rightFollower.setIdleMode(IdleMode.kBrake);
     
     driveTrain = new DifferentialDrive(_leftMaster, _rightMaster);
     driveTrain.setSafetyEnabled(false);
 
-    slew = new SlewRateLimiter(0.5, 0.5, 0);
+    // slew = new SlewRateLimiter(0.5, 0.5, 0);
     
     /* ------------------------- Setup odometry objects ------------------------- */
     /* ----------------- ENSURE EVERYTHING ODOMETRY IS IN METRES ---------------- */
 
 
     // Kinematics
-    m_kinematics = new DifferentialDriveKinematics(Units.inchesToMeters(track_width)); /* 28 inches / 39.37 */
+    m_kinematics = new DifferentialDriveKinematics(Units.inchesToMeters(track_width));
 
     // need device id
-    m_gyro = new Pigeon2(0);
+    m_gyro = new Pigeon2(Constants.PIGEON_ID);
     m_gyro.reset();
 
     // Unsure if integrated on victors and talons
-    leftEncoder = _rightMaster.getEncoder();
+    // leftEncoder1 = _leftMaster.getAbsoluteEncoder();
+    // rightEncoder1 = _rightMaster.getAbsoluteEncoder();
+
+    leftEncoder = _leftMaster.getEncoder();
     rightEncoder = _rightMaster.getEncoder();
+
+    // rightEncoder.setInverted(true);
 
     leftEncoder.setPosition(0);
     rightEncoder.setPosition(0);
+    // rightEncoder1.
+    float left_counts_per_rev = leftEncoder.getCountsPerRevolution();
+    float right_counts_per_rev = rightEncoder.getCountsPerRevolution();
+    leftEncoder.setPositionConversionFactor(6);
+    rightEncoder.setPositionConversionFactor(6);
 
-    // leftEncoder.setDistancePerPulse();
-    // rightEncoder.setDistancePerPulse();
-
-    double x = SmartDashboard.getNumber("starting_x", 0);
-    double y = SmartDashboard.getNumber("starting_y", 0);
+    double x = 0;
+    double y = 0;
+    // double x = SmartDashboard.getNumber("starting_x", 0);
+    // double y = SmartDashboard.getNumber("starting_y", 0);
 
     start_pose = new Pose2d(
       new Translation2d(x, y),
@@ -108,22 +131,31 @@ public class DriveSubsystem extends SubsystemBase {
 
   // Tele-Op Driving 
   public void ArcadeDrive(){
-    driveTrain.arcadeDrive(Input.getHorizontal(),slew.calculate(Input.getVertical()));
-    //driveTrain.arcadeDrive(Input.getHorizontal(), Input.getVertical());
+    // driveTrain.arcadeDrive(Input.getHorizontal() * 0.3f, slew.calculate(Input.getVertical()) * 0.3f);
+    driveTrain.arcadeDrive(Input.getHorizontal() * 0.4f, Input.getVertical() * 0.4f);
+    
+
+    SmartDashboard.putNumber("Left Encoder", leftEncoder.getPosition());
+    SmartDashboard.putNumber("Right Encoder", rightEncoder.getPosition());
+    SmartDashboard.putNumber("Gyroscope Yaw", m_gyro.getYaw().getValueAsDouble());
   }
 
   // Rotate when given a speed
   public void Rotate(double speed){
-    driveTrain.arcadeDrive(speed, 0);
+    // driveTrain.arcadeDrive(speed, 0);
   }
 
+  public Pose2d GetPose(){ return m_odometry.getPoseMeters(); }
+  public Pigeon2 GetPigeon(){ return m_gyro; } 
+  public double GetHeading(){ return m_pose.getRotation().getDegrees(); }
+
   public void AutoDrive(double speed,double rotation){
-    driveTrain.arcadeDrive(rotation, speed);
+    // driveTrain.arcadeDrive(rotation, speed);
   }
 
   // Move straight when given a speed
   public void Straight(double speed){
-    driveTrain.arcadeDrive(speed, 0);
+    // driveTrain.arcadeDrive(speed, 0);
   }
   
   
@@ -132,7 +164,7 @@ public class DriveSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    m_odometry.update(m_gyro.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition());
+    m_pose = m_odometry.update(m_gyro.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition());
   }
 
   /* Came with the template */
