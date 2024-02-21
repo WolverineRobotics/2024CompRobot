@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -59,16 +60,30 @@ public class LimelightSubsystem extends ProfiledPIDSubsystem {
         tx = LimelightHelpers.getTX("");
         ty = LimelightHelpers.getTY("");
         ta = LimelightHelpers.getTA("");
+
+        //LimelightHelpers.getBotPose2d("");
         
         // Latencies
         capture_latency = LimelightHelpers.getLatency_Capture("");
         pipeline_latency = LimelightHelpers.getLatency_Pipeline("");
+
+
+        //LimelightHelpers.getBotPose2d("");
         
         // detected April tag value
         tag_id = LimelightHelpers.getFiducialID("");
 
         // https://docs.limelightvision.io/docs/docs-limelight/getting-started/best-practices
         // Explains that we need a static IP configuration before connecting to the field
+    }
+
+    public Pose2d TryPose(){
+        Pose2d estimated_pose;
+        if(LimelightHelpers.getTV("")){
+            estimated_pose = LimelightHelpers.getBotPose2d("");
+        }
+
+        return null;
     }
 
     // Reads the auto alignment PID to the pid_output variable

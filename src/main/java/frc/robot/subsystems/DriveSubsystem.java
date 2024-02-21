@@ -14,6 +14,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.Unit;
 import edu.wpi.first.wpilibj.Encoder;
@@ -158,7 +159,25 @@ public class DriveSubsystem extends SubsystemBase {
     // driveTrain.arcadeDrive(speed, 0);
   }
   
-  
+  public DifferentialDriveWheelSpeeds GetWheelSpeeds() {
+    return new DifferentialDriveWheelSpeeds(
+      rightEncoder.getVelocity(),
+      leftEncoder.getVelocity());
+  }
+
+  public void SetDriveVoltages(double l_volts, double r_volts){
+    _rightMaster.setVoltage(r_volts);
+    _leftMaster.setVoltage(l_volts);
+    driveTrain.feed();
+  }
+
+  public void ResetGyro(){
+    m_gyro.reset();
+  }
+
+  public double GetTurnRate(){
+    return m_gyro.getRate();
+  }
 
 
   @Override
