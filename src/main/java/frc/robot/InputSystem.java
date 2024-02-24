@@ -29,7 +29,6 @@ public class InputSystem {
     public static boolean Balance(){ return dController.getRightBumper(); }
     public static boolean Align(){ return dController.getRightBumper(); }
     
-    
     /* OPERATOR CONTROLS */
 
     public static boolean SpinShooterEarly(){ return oController.getXButtonPressed(); } 

@@ -76,7 +76,7 @@ public class DriveSubsystem extends SubsystemBase {
     
     _leftMaster.setIdleMode(IdleMode.kBrake);
     _rightMaster.setIdleMode(IdleMode.kBrake);
-    
+
     // _leftFollower.setIdleMode(IdleMode.kBrake);
     // _rightFollower.setIdleMode(IdleMode.kBrake);
     
@@ -107,7 +107,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     leftEncoder.setPosition(0);
     rightEncoder.setPosition(0);
-    // rightEncoder1.
+// rightEncoder1.
     float left_counts_per_rev = leftEncoder.getCountsPerRevolution();
     float right_counts_per_rev = rightEncoder.getCountsPerRevolution();
     leftEncoder.setPositionConversionFactor(6);
@@ -157,7 +157,7 @@ public class DriveSubsystem extends SubsystemBase {
   // Move straight when given a speed
   public void Straight(double speed){
     // driveTrain.arcadeDrive(speed, 0);
-  }
+}
   
   public DifferentialDriveWheelSpeeds GetWheelSpeeds() {
     return new DifferentialDriveWheelSpeeds(
@@ -178,7 +178,7 @@ public class DriveSubsystem extends SubsystemBase {
   public double GetTurnRate(){
     return m_gyro.getRate();
   }
-
+  
 
   @Override
   public void periodic() {

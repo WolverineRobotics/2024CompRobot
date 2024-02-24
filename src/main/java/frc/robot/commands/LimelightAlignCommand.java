@@ -2,14 +2,14 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.LimelightHelpers;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.InputSystem;
 import frc.robot.Constants;
 
-public class LimelightAlignCommand extends CommandBase{
+public class LimelightAlignCommand extends Command{
 
     private double target = 0;
     private DriveSubsystem m_drive;
@@ -29,65 +29,41 @@ public class LimelightAlignCommand extends CommandBase{
     }
 
     //@Override
+    /* TRACK THE TARGET */
     public void execute(){
         trackTarget();
 
         double throttle = InputSystem.DriveSpeed();
         double turn = LimelightHelpers.getTX(""); //InputSystem.DriveRot();
-        boolean auto = InputSystem.Align();
-
         double distance = LimelightHelpers.getTA("");
+        boolean auto = InputSystem.Align();
         
-
         throttle *= 0.5;
         turn *= 0.05;
 
         double limit = 0.5;
 
-        if(turn < -limit){
-            turn = -limit;
-        }
-        
-        if(turn > limit){
-            turn = limit;
-        }
+        if(turn < -limit){turn = -limit;}
+        if(turn > limit){turn = limit;}
 
-
-
-        SmartDashboard.putNumber("TUUUURNNN", turn);
-        SmartDashboard.putNumber("TXXX", LimelightHelpers.getTX(""));
-        SmartDashboard.putNumber("TAAA", LimelightHelpers.getTA(""));
+        SmartDashboard.putNumber("[LIMELIGHT] Turn", turn);
+        SmartDashboard.putNumber("[LIMELIGHT] TX", LimelightHelpers.getTX(""));
+        SmartDashboard.putNumber("[LIMELIGHT] TA", LimelightHelpers.getTA(""));
 
         if(true)
         {
-
-            if (m_AprilTaginSight){
-
-                if(distance >= 2){
-                    throttle = -limit;
-                }
-                else if(distance < 1.5){
-                    throttle = limit;
-                }
-                else{
-                    throttle = 0;
-                }
-
+            if (m_AprilTaginSight)
+            {
+                if (distance >= 2){throttle = -limit;}
+                else if(distance < 1.5){throttle = limit;}
+                else{throttle = 0;}
                 m_drive.AutoDrive(-throttle, turn);
-
             } 
-
-            else {
-                m_drive.Rotate(0); 
-            }
+            else {m_drive.Rotate(0);}
         }
-
-        //else {
-        //    m_drive.Rotate(turn);
-        //}
-       
     }
 
+    /* GET LIMELIGHT VALUES */
     private static double getLimelightX()
     {
         double tx = LimelightHelpers.getTX("");
@@ -112,9 +88,9 @@ public class LimelightAlignCommand extends CommandBase{
         return tv;
     }
 
+    /* TRACKING METHOD */
     private void trackTarget()
     {
-        
         // Definitely needs configuration, but we ball
         final double DIST_BETWEEN = Constants.OperatorConstants.TAG_TO_ROBOT;
         final double MAX_SPEED = 0.5;
@@ -156,6 +132,18 @@ public class LimelightAlignCommand extends CommandBase{
         } 
     }
 
+    public boolean isFinished(){
+        if(LimelightHelpers.getTA("") == Constants.OperatorConstants.TAG_TO_ROBOT){
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    public void end(){
+        m_limelightThrottle = 0.0;
+        m_limelightTurn = 0.0;
+    }
 
     
     //@Override

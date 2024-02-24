@@ -13,9 +13,13 @@ public final class Constants {
 
   public static final int PIGEON_ID = 3;
 
+  /* Driving Constants */
   public static final double X_SPEEDREDUCTION = 0.6;
   public static final double Y_SPEED_REDUCTION = 0.5;
   public static final double DEADBAND_CONST = 0.05;
+
+  /* Shooting Constants */
+  public static final double shooterWheelGearRatio = 0.0;
     
   public static class OperatorConstants {
 
@@ -26,10 +30,10 @@ public final class Constants {
     /* CAN ID constants */
     public static final int kPigeonId = 3;
     
-    public static final int kLeftMotor1 = 0; // Left Side (Behind the Battery (bumpers!!!!))
+    public static final int kLeftShooterMotor1 = 0; 
+    public static final int kRightShooterMotor1 = 0; 
+
     public static final int kLeftMotor2 = 0; 
-    
-    public static final int kRightMotor1 = 0; // Right Side (Behind the Battery (bumpers!!!!))
     public static final int kRightMotor2 = 0;
 
     public static final int kLeftMotorEncoder_A = 5; 

@@ -4,8 +4,9 @@ import edu.wpi.first.wpilibj.XboxController;
 public class Input {
     
     public static XboxController driveController = new XboxController(0);
-    public static XboxController OpController = new XboxController(0);
+    public static XboxController opController = new XboxController(1);
 
+    /* DRIVE CONTROLS */
     public static double getVertical(){
         return (driveController.getLeftY());
     }
@@ -18,7 +19,16 @@ public class Input {
         return driveController.getLeftTriggerAxis();
         }
 
+    /* SHOOTER CONTROLS */
+    public static double fireInTheHole(){
+        return (opController.getRightTriggerAxis());
+    }
+
     public static XboxController Driver(){
         return driveController;
         }
+
+    public static XboxController Operator(){
+        return opController;
+    }
 }
