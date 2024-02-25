@@ -1,5 +1,7 @@
 package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Input;
+import frc.robot.Robot;
 import frc.robot.subsystems.ShooterSubsystem;
 
 public class DefaultShootingCommand extends Command{
@@ -16,9 +18,7 @@ public class DefaultShootingCommand extends Command{
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
-    public void execute() {
-        m_shooter.setShooterSpeed();
-    }
+    public void execute() {}
 
     // Called once the command ends or is interrupted.
     @Override

@@ -10,12 +10,17 @@ import frc.robot.commands.DecelerateDriveCommand;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DefaultShootingCommand;
 import frc.robot.commands.LimelightAlignCommand;
+import frc.robot.commands.PosessGamepieceCommand;
+import frc.robot.commands.StartingPositionsCommand;
+import frc.robot.commands.Handoffs.StandardHandoffCommand;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 public class RobotContainer {
@@ -30,6 +35,8 @@ public class RobotContainer {
 
   /* Shooter */
   private ShooterSubsystem m_shooter = new ShooterSubsystem();
+  private IntakeSubsystem m_intake = new IntakeSubsystem();
+
   private Command m_shootingcommand = new DefaultShootingCommand(m_shooter);
   
   /* Controllers */ 
@@ -38,6 +45,12 @@ public class RobotContainer {
 
   public static CommandXboxController m_operatorController =
       new CommandXboxController(OperatorConstants.kOperatorControllerPort);
+
+  public static RobotContainer instance;
+
+  // private static final SequentialCommandGroup postPosessionCommandGroup;
+  // private static final SequentialCommandGroup acquiredGamepieceCommandGroup = new SequentialCommandGroup(
+  //   new );
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -48,6 +61,7 @@ public class RobotContainer {
     CommandScheduler.getInstance().setDefaultCommand(m_drive, m_drivecommand);
     CommandScheduler.getInstance().setDefaultCommand(m_shooter, m_shootingcommand);
 
+    instance = this;
     // CameraServer.startAutomaticCapture();
     // configureBindings();
   }
@@ -59,6 +73,18 @@ public class RobotContainer {
 
   public DriveSubsystem VroomVroom(){
     return m_drive;
+  }
+
+  public void PostPosessionRoutine(){
+    CommandScheduler.getInstance().schedule(new StartingPositionsCommand(m_shooter, m_intake));
+  }
+
+  public void AcquiredGamepiece(){
+    // Called when the gamepiece is acquired via intake
+    // Schedules the handoff by default
+    CommandScheduler.getInstance().schedule(
+      new StandardHandoffCommand(m_shooter, m_intake).andThen(
+        new PosessGamepieceCommand(m_shooter, m_intake) ) );
   }
   
   public Command getAutonomousCommand() {
