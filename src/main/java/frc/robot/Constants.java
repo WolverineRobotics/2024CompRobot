@@ -95,4 +95,9 @@ public final class Constants {
     public static final int kIntakeAmpScoringPosition = 15;
   }
 
+  public static class Offsets{
+    public static final double kLimelightShooterOffset = 0.19;
+    public static final double kSpeakerToTagHeightOffset = 0.63;
+  }
+
 }

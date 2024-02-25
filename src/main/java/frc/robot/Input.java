@@ -24,9 +24,14 @@ public class Input {
         return (opController.getRightTriggerAxis());
     }
 
+    public static boolean waterOnTheHill(){
+        return (opController.getRightBumper());
+    }
+
+
     public static XboxController Driver(){
         return driveController;
-        }
+    }
 
     public static XboxController Operator(){
         return opController;
