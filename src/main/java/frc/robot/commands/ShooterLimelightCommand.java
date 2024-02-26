@@ -26,12 +26,13 @@ public class ShooterLimelightCommand extends Command{
     private Double shooter_dist_to_target, shooter_angle, pid_goal;
     private Pose3d target_pose;
 
-    public boolean m_AprilTaginSight = false, at_goal;
+    public boolean m_AprilTaginSight = false, at_goal, continuous_align;
 
     public ShooterLimelightCommand(ShooterSubsystem shooter, LimelightSubsystem limelight){
 
         m_shooter = shooter;
         m_limelight = limelight;
+        continuous_align = false;
         addRequirements(shooter, limelight);
     }
 
@@ -59,7 +60,7 @@ public class ShooterLimelightCommand extends Command{
                     target_pose.getY(),
                     target_pose.getZ(),
                 };
-
+                
                 // applying offsets for accurate target pose
                 target_pos[2] -= Constants.Offsets.kLimelightShooterOffset;
                 target_pos[2] += Constants.Offsets.kSpeakerToTagHeightOffset;
@@ -86,12 +87,16 @@ public class ShooterLimelightCommand extends Command{
 
     @Override
     public boolean isFinished(){
-        return !Input.waterOnTheHill();
+        return (m_shooter.getController().atGoal() && !continuous_align);
 
         // if(LimelightHelpers.getTA("") == Constants.OperatorConstants.TAG_TO_ROBOT){
         //     return true;
         // } else {
         //     return false;
         // }
+    }
+
+    public void SetContinuous(boolean continuous){
+        continuous_align = continuous;
     }
 }

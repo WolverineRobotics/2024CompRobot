@@ -76,7 +76,10 @@ private Command m_autonomousCommand;
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    
+
+    if(Input.Driver().getLeftBumperPressed() && controls_gamepiece){m_robotContainer.AutoAlign(true); }
+    else if(Input.Driver().getLeftBumperReleased() && controls_gamepiece){ m_robotContainer.AutoAlign(false);}
+  
   }
   
   @Override
