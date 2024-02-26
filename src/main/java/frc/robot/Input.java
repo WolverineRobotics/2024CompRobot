@@ -17,7 +17,11 @@ public class Input {
 
     public static double driveDecelerate(){
         return driveController.getLeftTriggerAxis();
-        }
+    }
+
+    public static boolean alignTag(){
+        return driveController.getRightBumper();
+    }
 
     /* SHOOTER CONTROLS */
     public static double fireInTheHole(){
@@ -28,7 +32,7 @@ public class Input {
         return (opController.getRightBumper());
     }
 
-
+    /* DRIVER AND OPERATOR */
     public static XboxController Driver(){
         return driveController;
     }

@@ -7,6 +7,7 @@ import edu.wpi.first.networktables.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.LimelightHelpers;
 
@@ -49,6 +50,23 @@ public class LimelightSubsystem extends ProfiledPIDSubsystem {
         
         
         setDefaultCommand(null);
+    }
+
+    /* DISTANCE CALCULATION 
+       distance = (height of target - height of camera) / tan(mounting angle + angle to target)
+
+       What I'm thinking right now is to somehow pass target height values into this method and calculate an estimated distance...
+       TODO: Get Measurements
+    */
+
+    private double estimatedDistance(double goalHeightMeters){
+        double tagAngle = LimelightHelpers.getTY("");
+
+        double limelightOffsetAngle = Constants.Positional.limelightMountAngle; // Angular offset vertically
+        double limelightHeightMeters = Constants.Positional.limelightHeight; // Height from ground -> lens
+        double goalAngle = Math.toRadians(limelightOffsetAngle + tagAngle);
+
+        return (goalHeightMeters - limelightHeightMeters) / (Math.tan(goalAngle));
     }
     
     @Override

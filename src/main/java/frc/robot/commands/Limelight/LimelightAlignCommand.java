@@ -1,5 +1,6 @@
-package frc.robot.commands;
+package frc.robot.commands.Limelight;
 
+import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -8,24 +9,25 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.InputSystem;
 import frc.robot.Constants;
+import frc.robot.Input;
+import frc.robot.AprilTagData;
 
 public class LimelightAlignCommand extends Command{
 
-    private double target = 0;
     private DriveSubsystem m_drive;
     private XboxController dController;
 
     private LimelightSubsystem m_limelight;
+
     private double m_limelightThrottle = 0;
     private double m_limelightTurn = 0;
 
     public boolean m_AprilTaginSight = false;
 
-    public LimelightAlignCommand(DriveSubsystem drive, LimelightSubsystem limelight){
+    public LimelightAlignCommand(LimelightSubsystem limelight){
 
-        m_drive = drive;
         m_limelight = limelight;
-        addRequirements(drive, limelight);
+        addRequirements(limelight);
     }
 
     //@Override
@@ -36,7 +38,7 @@ public class LimelightAlignCommand extends Command{
         double throttle = InputSystem.DriveSpeed();
         double turn = LimelightHelpers.getTX(""); //InputSystem.DriveRot();
         double distance = LimelightHelpers.getTA("");
-        boolean auto = InputSystem.Align();
+        boolean auto = Input.alignTag();
         
         throttle *= 0.5;
         turn *= 0.05;
@@ -48,9 +50,11 @@ public class LimelightAlignCommand extends Command{
 
         SmartDashboard.putNumber("[LIMELIGHT] Turn", turn);
         SmartDashboard.putNumber("[LIMELIGHT] TX", LimelightHelpers.getTX(""));
+        SmartDashboard.putNumber("[LIMELIGHT] TY", LimelightHelpers.getTY(""));
         SmartDashboard.putNumber("[LIMELIGHT] TA", LimelightHelpers.getTA(""));
+        SmartDashboard.putBoolean("[LIMELIGHT] TV", LimelightHelpers.getTV(""));
 
-        if(true)
+        if(auto)
         {
             if (m_AprilTaginSight)
             {
@@ -105,7 +109,7 @@ public class LimelightAlignCommand extends Command{
         // The values in which we want the robot to turn/throttle upon detection
         double m_limelightThrottle = 0;
         double m_limelightTurn = 0;
-        
+
         // When there's no AprilTag detection
         if (tv != true)
         {
@@ -126,14 +130,19 @@ public class LimelightAlignCommand extends Command{
         m_limelightTurn = driveRotate;
 
         // Set a speed restraint while driving forward
-        if  (m_limelightThrottle > MAX_SPEED)
-        {
-            m_limelightThrottle = MAX_SPEED;
-        } 
+        if  (m_limelightThrottle > MAX_SPEED){m_limelightThrottle = MAX_SPEED;} 
     }
 
     public boolean isFinished(){
-        if(LimelightHelpers.getTA("") == Constants.OperatorConstants.TAG_TO_ROBOT){
+        // if(LimelightHelpers.getTA("") == Constants.OperatorConstants.TAG_TO_ROBOT){
+        //     return true;
+        // } else {
+        //     return false;
+        // }
+        
+        // This will try to check if the tag is within a desired error range of at least 2.5%
+        // I HIGHLY DOUBT it will be exactly where the constant states
+        if(Math.abs(Constants.OperatorConstants.TAG_TO_ROBOT - LimelightHelpers.getTA("")) < 2.5){
             return true;
         } else {
             return false;

@@ -50,12 +50,10 @@ public class ShooterSubsystem extends ProfiledPIDSubsystem {
         setGoal(-10);
         getController().setTolerance(2);
         
-        
         // Initializing Idle Modes for Motors
         rightPivotMotor.setIdleMode(IdleMode.kBrake);
         leftShooterMotor.setIdleMode(IdleMode.kCoast);
         posessionMotor.setIdleMode(IdleMode.kBrake);
-        
         
         // SmartDashboard logging
         SmartDashboard.putNumber("[SHOOTER] Shooter Current", getShooterVoltage());
@@ -64,7 +62,6 @@ public class ShooterSubsystem extends ProfiledPIDSubsystem {
         SmartDashboard.putNumber("[SHOOTER] Shooter Position", rightCanEncoder.getPosition());
 
     }
-
 
     @Override
     public void periodic(){
@@ -91,11 +88,8 @@ public class ShooterSubsystem extends ProfiledPIDSubsystem {
         else if (!Robot.has_gamepiece) { setShooterSpeed(Input.fireInTheHole() * -0.2); }
     }
 
-
     public void setShooterSpeed(double speed){ leftShooterMotor.set(speed); }
-
     public void setPosessionSpeed(double speed){ posessionMotor.set(speed); }
-
     public void setShooterVoltage(double voltage){
         rightPivotMotor.setVoltage(voltage);
         leftShooterMotor.setVoltage(voltage);

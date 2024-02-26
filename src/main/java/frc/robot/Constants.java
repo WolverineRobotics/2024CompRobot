@@ -23,7 +23,7 @@ public final class Constants {
   public static final double DEADBAND_CONST = 0.05;
 
   /* Shooting Constants */
-  public static final double shooterWheelGearRatio = 0.0;
+  public static final double shooterWheelGearRatio = 1.0;
   public static final double intakeWheelGearRatio = 0.0;
     
   public static class OperatorConstants {
@@ -93,6 +93,11 @@ public final class Constants {
     // For Amp Scoring
     public static final int kShooterAmpScoringPosition = 90;
     public static final int kIntakeAmpScoringPosition = 15;
+
+    // Limelight Mounting Position (Going by CAD here)
+    public static final double limelightMountAngle = 0; // Mounted at 90 Degrees
+    public static final double limelightHeight = 11.3; // From Lens --> Ground
+
   }
 
   public static class Offsets{

@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.Drive;
 
 import frc.robot.Input;
 import frc.robot.Constants;
@@ -24,11 +24,7 @@ public class DecelerateDriveCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
-    // X, Y Movement + Bumper
-    // double throttle = Input.getHorizontal();
-    // double turn = Input.getVertical(); 
-
+    
     // For Deceleration
     double yspeedReduction = Constants.Y_SPEED_REDUCTION;
     double xspeedReduction = Constants.X_SPEEDREDUCTION;

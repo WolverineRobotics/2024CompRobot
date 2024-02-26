@@ -135,10 +135,9 @@ public class DriveSubsystem extends SubsystemBase {
     // driveTrain.arcadeDrive(Input.getHorizontal() * 0.3f, slew.calculate(Input.getVertical()) * 0.3f);
     driveTrain.arcadeDrive(Input.getHorizontal() * 0.4f, Input.getVertical() * 0.4f);
     
-
-    SmartDashboard.putNumber("Left Encoder", leftEncoder.getPosition());
-    SmartDashboard.putNumber("Right Encoder", rightEncoder.getPosition());
-    SmartDashboard.putNumber("Gyroscope Yaw", m_gyro.getYaw().getValueAsDouble());
+    SmartDashboard.putNumber("[DRIVE] Left Encoder", leftEncoder.getPosition());
+    SmartDashboard.putNumber("[DRIVE] Right Encoder", rightEncoder.getPosition());
+    SmartDashboard.putNumber("[DRIVE] Gyroscope Yaw", m_gyro.getYaw().getValueAsDouble());
   }
 
   // Rotate when given a speed

@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.Groups;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
@@ -6,11 +6,11 @@ import frc.robot.Input;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
-public class StartingPositionsCommand extends Command{
+public class PostShotCommand extends Command{
         private ShooterSubsystem shooter;
         private IntakeSubsystem intake;
 
-    public StartingPositionsCommand(ShooterSubsystem shooterSubsystem, IntakeSubsystem intakeSubsystem) {
+    public PostShotCommand(ShooterSubsystem shooterSubsystem, IntakeSubsystem intakeSubsystem) {
         shooter = shooterSubsystem;
         intake = intakeSubsystem;
         addRequirements(shooterSubsystem, intakeSubsystem);
@@ -18,8 +18,8 @@ public class StartingPositionsCommand extends Command{
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        shooter.setGoal(Constants.Positional.kShooterSubwooferShotPosition); 
-        intake.setGoal(Constants.Positional.kIntakeSubwooferHandoffPosition); 
+        shooter.setGoal(Constants.Positional.kIntakeSubwooferHandoffPosition); 
+        intake.setGoal(Constants.Positional.kShooterMinPosition); 
 
         shooter.enable();
         intake.enable();

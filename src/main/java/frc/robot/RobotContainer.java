@@ -6,13 +6,13 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
-import frc.robot.commands.DecelerateDriveCommand;
-import frc.robot.commands.DefaultDriveCommand;
-import frc.robot.commands.DefaultShootingCommand;
-import frc.robot.commands.LimelightAlignCommand;
-import frc.robot.commands.PosessGamepieceCommand;
-import frc.robot.commands.StartingPositionsCommand;
+import frc.robot.commands.DefaultCommands.DefaultDriveCommand;
+import frc.robot.commands.DefaultCommands.DefaultShootingCommand;
+import frc.robot.commands.Drive.DecelerateDriveCommand;
+import frc.robot.commands.Groups.PosessGamepieceCommand;
+import frc.robot.commands.Groups.StartingPositionsCommand;
 import frc.robot.commands.Handoffs.StandardHandoffCommand;
+import frc.robot.commands.Limelight.LimelightAlignCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
@@ -30,14 +30,16 @@ public class RobotContainer {
   private Command m_drivecommand = new DefaultDriveCommand(m_drive);
 
   /* Limelight */
-  // private LimelightSubsystem m_limelight = new LimelightSubsystem();
-  // private Command m_limelightCommand = new LimelightAlignCommand(m_drive, m_limelight);
+  private LimelightSubsystem m_limelight = new LimelightSubsystem();
+  private Command m_limelightAlignCommand = new LimelightAlignCommand(m_limelight);
 
   /* Shooter */
   private ShooterSubsystem m_shooter = new ShooterSubsystem();
-  private IntakeSubsystem m_intake = new IntakeSubsystem();
-
   private Command m_shootingcommand = new DefaultShootingCommand(m_shooter);
+
+  /* Intake */
+  private IntakeSubsystem m_intake = new IntakeSubsystem();
+  private IntakeSubsystem m_intakecommand = new IntakeSubsystem();
   
   /* Controllers */ 
   public static CommandXboxController m_driverController =
@@ -57,18 +59,19 @@ public class RobotContainer {
 
     m_drivecommand = new DefaultDriveCommand(m_drive);
     m_shootingcommand = new DefaultShootingCommand(m_shooter);
-
+    m_limelightAlignCommand = new LimelightAlignCommand(m_limelight);
+    
     CommandScheduler.getInstance().setDefaultCommand(m_drive, m_drivecommand);
     CommandScheduler.getInstance().setDefaultCommand(m_shooter, m_shootingcommand);
+    CommandScheduler.getInstance().setDefaultCommand(m_limelight, m_limelightAlignCommand);
 
     instance = this;
-    // CameraServer.startAutomaticCapture();
     // configureBindings();
   }
 
   private void configureBindings() {
     m_driverController.leftBumper().whileTrue(new DecelerateDriveCommand(m_drive));
-    // joeMama.driveDecelerate.whileTrue(new DecelerateDriveCommand(m_drive));
+    m_driverController.rightBumper().whileTrue(new LimelightAlignCommand(m_limelight));
   }
 
   public DriveSubsystem VroomVroom(){
