@@ -5,7 +5,9 @@
 package frc.robot.subsystems;
 import frc.robot.Constants;
 import frc.robot.Input;
+import frc.robot.Constants.OperatorConstants;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.estimator.PoseEstimator;
@@ -15,12 +17,14 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.Unit;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.drive.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.DriverStation;
 
@@ -33,7 +37,7 @@ import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
-public class DriveSubsystem extends SubsystemBase {
+public class DriveSubsystem extends ProfiledPIDSubsystem {
 
   public static DifferentialDrive driveTrain;
   private static DifferentialDriveKinematics m_kinematics;
@@ -60,6 +64,14 @@ public class DriveSubsystem extends SubsystemBase {
 
 
   public DriveSubsystem() {
+    // Rotate In Place Gains & Goals - Separate PID Controller For DriveForward
+    super(
+      new ProfiledPIDController(Constants.kp, Constants.ki, Constants.kd, 
+      new TrapezoidProfile.Constraints(OperatorConstants.kMaxDriveVelocity, OperatorConstants.kMaxDriveAcceleration)), 0
+    );
+ 
+    setGoal(0);
+    getController().setTolerance(0);
 
     /* Setup base drivetrain */ 
     // CANSparkMax _leftFollower = new CANSparkMax(Constants.LEFT_MOTOR_1, MotorType.kBrushless);
@@ -70,8 +82,6 @@ public class DriveSubsystem extends SubsystemBase {
     // _leftFollower.follow(_leftMaster);
     // _rightFollower.follow(_rightMaster);
     
-    // _leftFollower.setInverted(InvertType.FollowMaster);
-    // _rightFollower.setInverted(InvertType.FollowMaster);
     _rightMaster.setInverted(true);
     _leftMaster.setInverted(true);
     
@@ -97,10 +107,6 @@ public class DriveSubsystem extends SubsystemBase {
     m_gyro = new Pigeon2(Constants.PIGEON_ID);
     m_gyro.reset();
     
-    // Unsure if integrated on victors and talons
-    // leftEncoder1 = _leftMaster.getAbsoluteEncoder();
-    // rightEncoder1 = _rightMaster.getAbsoluteEncoder();
-    
     leftEncoder = _leftMaster.getEncoder();
     rightEncoder = _rightMaster.getEncoder();
     
@@ -108,7 +114,6 @@ public class DriveSubsystem extends SubsystemBase {
     
     leftEncoder.setPosition(0);
     rightEncoder.setPosition(0);
-    // rightEncoder1.
     float left_counts_per_rev = leftEncoder.getCountsPerRevolution();
     float right_counts_per_rev = rightEncoder.getCountsPerRevolution();
     leftEncoder.setPositionConversionFactor(6);
@@ -125,7 +130,22 @@ public class DriveSubsystem extends SubsystemBase {
     );
       
     m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition(), start_pose);
-        }
+    }
+
+    // Profiled PID Commands
+    protected void useOutput(double output, TrapezoidProfile.State setpoint) {
+      SmartDashboard.putNumber("[DRIVE] Output", output);
+      SmartDashboard.putNumber("[DRIVE] Setpoint", setpoint.position);
+      if(!getController().atGoal()) {
+        AutoDrive(0, output);
+      }
+    }
+
+    // Get Pigeon Heading
+    protected double getMeasurement() {
+      SmartDashboard.putNumber("[DRIVE] Pigeon Heading", GetHeading());
+      return GetHeading();
+    }
     
     // public void setDeadband(){
   //   driveTrain.setDeadband(Constants.DEADBAND_CONST);

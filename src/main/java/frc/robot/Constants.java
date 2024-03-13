@@ -22,6 +22,11 @@ public final class Constants {
   public static final double Y_SPEED_REDUCTION = 0.5;
   public static final double DEADBAND_CONST = 0.05;
 
+  // PID & ProfiledPID Constants -- Tune Later
+  public static final double kp = 0;
+  public static final double ki = 0;
+  public static final double kd = 0;
+  
   /* Shooting Constants */
   public static final double shooterWheelGearRatio = 1.0;
   public static final double intakeWheelGearRatio = 0.0;
