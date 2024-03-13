@@ -108,11 +108,12 @@ public class DriveSubsystem extends SubsystemBase {
     
     leftEncoder.setPosition(0);
     rightEncoder.setPosition(0);
-    // rightEncoder1.
+
     float left_counts_per_rev = leftEncoder.getCountsPerRevolution();
     float right_counts_per_rev = rightEncoder.getCountsPerRevolution();
-    leftEncoder.setPositionConversionFactor(6);
-    rightEncoder.setPositionConversionFactor(6);
+    
+    leftEncoder.setPositionConversionFactor(Constants.kDriverEncoderDistanceConversionFactor);
+    rightEncoder.setPositionConversionFactor(Constants.kDriverEncoderDistanceConversionFactor);
     
     double x = 0;
     double y = 0;

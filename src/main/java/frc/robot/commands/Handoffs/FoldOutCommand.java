@@ -5,18 +5,18 @@ import frc.robot.Constants;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
-public class FoldBackCommand extends Command{
+public class FoldOutCommand extends Command{
         
         private IntakeSubsystem intake;
 
-    public FoldBackCommand(IntakeSubsystem intakeSubsystem) {
+    public FoldOutCommand(IntakeSubsystem intakeSubsystem) {
         intake = intakeSubsystem;
         addRequirements(intakeSubsystem);
     }
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        intake.setGoal(Constants.Positional.kIntakeDefaultFeedPosition); 
+        intake.setGoal(Constants.Positional.kIntakeIntakingPosition); 
         intake.Brake();
         intake.enable();
     }

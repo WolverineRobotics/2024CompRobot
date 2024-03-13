@@ -7,3 +7,10 @@ make it score amp.
 Verify angles with encoders
 
 Win.
+
+
+
+ideas for reconciliation ig
+- pneumatics
+- churro through intake
+- tentative static shooter

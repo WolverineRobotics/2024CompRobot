@@ -15,6 +15,8 @@ public final class Constants {
   public static final int kSPosessionLimitSwitchChannel = 1;
   public static final int kIntakePosessionLimitSwitchChannel = 1;
 
+  public static final int kDriverEncoderDistanceConversionFactor= 7;
+
   public static final int PIGEON_ID = 3;
 
   /* Driving Constants */
