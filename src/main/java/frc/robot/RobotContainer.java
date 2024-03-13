@@ -11,6 +11,7 @@ import frc.robot.commands.DefaultCommands.DefaultShootingCommand;
 import frc.robot.commands.Drive.DecelerateDriveCommand;
 import frc.robot.commands.Groups.PosessGamepieceCommand;
 import frc.robot.commands.Groups.StartingPositionsCommand;
+import frc.robot.commands.Handoffs.FoldBackCommand;
 import frc.robot.commands.Handoffs.StandardHandoffCommand;
 import frc.robot.commands.Limelight.LimelightAlignCommand;
 import frc.robot.subsystems.DriveSubsystem;
@@ -34,8 +35,8 @@ public class RobotContainer {
   private Command m_limelightAlignCommand = new LimelightAlignCommand(m_limelight);
 
   /* Shooter */
-  private ShooterSubsystem m_shooter = new ShooterSubsystem();
-  private Command m_shootingcommand = new DefaultShootingCommand(m_shooter);
+  // private ShooterSubsystem m_shooter = new ShooterSubsystem();
+  // private Command m_shootingcommand = new DefaultShootingCommand(m_shooter);
 
   /* Intake */
   private IntakeSubsystem m_intake = new IntakeSubsystem();
@@ -58,11 +59,11 @@ public class RobotContainer {
   public RobotContainer() {
 
     m_drivecommand = new DefaultDriveCommand(m_drive);
-    m_shootingcommand = new DefaultShootingCommand(m_shooter);
+    // m_shootingcommand = new DefaultShootingCommand(m_shooter);
     m_limelightAlignCommand = new LimelightAlignCommand(m_limelight);
     
     CommandScheduler.getInstance().setDefaultCommand(m_drive, m_drivecommand);
-    CommandScheduler.getInstance().setDefaultCommand(m_shooter, m_shootingcommand);
+    // CommandScheduler.getInstance().setDefaultCommand(m_shooter, m_shootingcommand);
     CommandScheduler.getInstance().setDefaultCommand(m_limelight, m_limelightAlignCommand);
 
     instance = this;
@@ -79,15 +80,21 @@ public class RobotContainer {
   }
 
   public void PostPosessionRoutine(){
-    CommandScheduler.getInstance().schedule(new StartingPositionsCommand(m_shooter, m_intake));
+    // CommandScheduler.getInstance().schedule(new StartingPositionsCommand(m_intake));
+    CommandScheduler.getInstance().schedule(new FoldBackCommand(m_intake));
   }
 
   public void AcquiredGamepiece(){
     // Called when the gamepiece is acquired via intake
     // Schedules the handoff by default
+
     CommandScheduler.getInstance().schedule(
-      new StandardHandoffCommand(m_shooter, m_intake).andThen(
-        new PosessGamepieceCommand(m_shooter, m_intake) ) );
+      new FoldBackCommand(m_intake)
+    );
+
+    // CommandScheduler.getInstance().schedule(
+    //   new StandardHandoffCommand(m_intake).andThen(
+    //     new PosessGamepieceCommand(m_intake) ) );
   }
   
   public Command getAutonomousCommand() {

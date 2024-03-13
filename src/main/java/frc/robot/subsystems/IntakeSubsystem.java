@@ -106,6 +106,9 @@ public class IntakeSubsystem extends ProfiledPIDSubsystem {
     }
     
     public void setIntakeSpeed(double speed){ intakeMotor.set(speed); }
+    
+    public void Brake(){ intakeMotor.setIdleMode(IdleMode.kBrake); }
+    public void Coast(){ intakeMotor.setIdleMode(IdleMode.kCoast); }
 
     public double getIntakeVoltage(){ return pivotMotor.getOutputCurrent() * pivotMotor.getBusVoltage(); }
 

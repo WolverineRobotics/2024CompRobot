@@ -1,0 +1,9 @@
+make motors work.
+
+make it score amp.
+- Folded down position with various speeds
+- Folded up with various set speeds and angles
+
+Verify angles with encoders
+
+Win.

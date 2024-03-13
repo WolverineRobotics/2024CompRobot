@@ -10,18 +10,21 @@ public class StartingPositionsCommand extends Command{
         private ShooterSubsystem shooter;
         private IntakeSubsystem intake;
 
-    public StartingPositionsCommand(ShooterSubsystem shooterSubsystem, IntakeSubsystem intakeSubsystem) {
-        shooter = shooterSubsystem;
+    // public StartingPositionsCommand(ShooterSubsystem shooterSubsystem, IntakeSubsystem intakeSubsystem) {
+    public StartingPositionsCommand(IntakeSubsystem intakeSubsystem) {
+        // shooter = shooterSubsystem;
         intake = intakeSubsystem;
-        addRequirements(shooterSubsystem, intakeSubsystem);
+
+        // addRequirements(shooterSubsystem, intakeSubsystem);
+        addRequirements(intakeSubsystem);
     }
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        shooter.setGoal(Constants.Positional.kShooterSubwooferShotPosition); 
+        // shooter.setGoal(Constants.Positional.kShooterSubwooferShotPosition); 
         intake.setGoal(Constants.Positional.kIntakeSubwooferHandoffPosition); 
 
-        shooter.enable();
+        // shooter.enable();
         intake.enable();
     }
 
@@ -37,6 +40,7 @@ public class StartingPositionsCommand extends Command{
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return shooter.getController().atGoal() && intake.getController().atGoal();
+        // return shooter.getController().atGoal() && intake.getController().atGoal();
+        return intake.getController().atGoal();
     }
 }

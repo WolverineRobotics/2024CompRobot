@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.drive.*;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.DriverStation;
 
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.*;
@@ -76,7 +77,7 @@ public class DriveSubsystem extends SubsystemBase {
     
     _leftMaster.setIdleMode(IdleMode.kBrake);
     _rightMaster.setIdleMode(IdleMode.kBrake);
-
+    
     // _leftFollower.setIdleMode(IdleMode.kBrake);
     // _rightFollower.setIdleMode(IdleMode.kBrake);
     
@@ -86,47 +87,47 @@ public class DriveSubsystem extends SubsystemBase {
     // slew = new SlewRateLimiter(0.5, 0.5, 0);
     
     /* ------------------------- Setup odometry objects ------------------------- */
-    /* ----------------- ENSURE EVERYTHING ODOMETRY IS IN METRES ---------------- */
-
-
+/* ----------------- ENSURE EVERYTHING ODOMETRY IS IN METRES ---------------- */
+    
+    
     // Kinematics
     m_kinematics = new DifferentialDriveKinematics(Units.inchesToMeters(track_width));
-
+    
     // need device id
     m_gyro = new Pigeon2(Constants.PIGEON_ID);
     m_gyro.reset();
-
+    
     // Unsure if integrated on victors and talons
     // leftEncoder1 = _leftMaster.getAbsoluteEncoder();
     // rightEncoder1 = _rightMaster.getAbsoluteEncoder();
-
+    
     leftEncoder = _leftMaster.getEncoder();
     rightEncoder = _rightMaster.getEncoder();
-
+    
     // rightEncoder.setInverted(true);
-
+    
     leftEncoder.setPosition(0);
     rightEncoder.setPosition(0);
-// rightEncoder1.
+    // rightEncoder1.
     float left_counts_per_rev = leftEncoder.getCountsPerRevolution();
     float right_counts_per_rev = rightEncoder.getCountsPerRevolution();
     leftEncoder.setPositionConversionFactor(6);
     rightEncoder.setPositionConversionFactor(6);
-
+    
     double x = 0;
     double y = 0;
     // double x = SmartDashboard.getNumber("starting_x", 0);
     // double y = SmartDashboard.getNumber("starting_y", 0);
-
+    
     start_pose = new Pose2d(
       new Translation2d(x, y),
       m_gyro.getRotation2d()
     );
-
+      
     m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition(), start_pose);
-  }
-  
-  // public void setDeadband(){
+        }
+    
+    // public void setDeadband(){
   //   driveTrain.setDeadband(Constants.DEADBAND_CONST);
   // }
 
@@ -135,61 +136,64 @@ public class DriveSubsystem extends SubsystemBase {
     // driveTrain.arcadeDrive(Input.getHorizontal() * 0.3f, slew.calculate(Input.getVertical()) * 0.3f);
     driveTrain.arcadeDrive(Input.getHorizontal() * 0.4f, Input.getVertical() * 0.4f);
     
-    SmartDashboard.putNumber("[DRIVE] Left Encoder", leftEncoder.getPosition());
-    SmartDashboard.putNumber("[DRIVE] Right Encoder", rightEncoder.getPosition());
-    SmartDashboard.putNumber("[DRIVE] Gyroscope Yaw", m_gyro.getYaw().getValueAsDouble());
-  }
-
-  // Rotate when given a speed
-  public void Rotate(double speed){
-    // driveTrain.arcadeDrive(speed, 0);
+    // SmartDashboard.putNumber("[DRIVE] Left Encoder", leftEncoder.getPosition());
+    // SmartDashboard.putNumber("[DRIVE] Right Encoder", rightEncoder.getPosition());
+    // SmartDashboard.putNumber("[DRIVE] Gyroscope Yaw", m_gyro.getYaw().getValueAsDouble());
   }
 
   public Pose2d GetPose(){ return m_odometry.getPoseMeters(); }
   public Pigeon2 GetPigeon(){ return m_gyro; } 
-  public double GetHeading(){ return m_pose.getRotation().getDegrees(); }
+  public double GetHeading(){ return m_pose.getRotation().getDegrees();}
+
+  // if (DriverStation.getAlliance() == DriverStation.Alliance.Red){
+  //   new DifferentialDrivePoseEstimator(
+  //     m_kinematics, 
+  //     m_gyro.getRotation2d(),
+  //     leftEncoder.getDistance(), 
+  //     rightEncoder.getDistance() 
+  //     m_pose);
+  // }
 
   public void AutoDrive(double speed,double rotation){
-    // driveTrain.arcadeDrive(rotation, speed);
-  }
+      // driveTrain.arcadeDrive(rotation, speed);
+    }
 
-  // Move straight when given a speed
-  public void Straight(double speed){
-    // driveTrain.arcadeDrive(speed, 0);
-}
+  public void Rotate(double rotation){
+    // driveTrain.arcadeDrive(rotation, 0);
+  }
   
   public DifferentialDriveWheelSpeeds GetWheelSpeeds() {
     return new DifferentialDriveWheelSpeeds(
       rightEncoder.getVelocity(),
       leftEncoder.getVelocity());
-  }
-
-  public void SetDriveVoltages(double l_volts, double r_volts){
-    _rightMaster.setVoltage(r_volts);
-    _leftMaster.setVoltage(l_volts);
-    driveTrain.feed();
-  }
-
-  public void ResetGyro(){
-    m_gyro.reset();
-  }
-
-  public double GetTurnRate(){
-    return m_gyro.getRate();
-  }
-  
-
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-    m_pose = m_odometry.update(m_gyro.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition());
-  }
-
-  /* Came with the template */
+    }
+    
+    public void SetDriveVoltages(double l_volts, double r_volts){
+      _rightMaster.setVoltage(r_volts);
+      _leftMaster.setVoltage(l_volts);
+      driveTrain.feed();
+    }
+    
+    public void ResetGyro(){
+      m_gyro.reset();
+    }
+    
+    public double GetTurnRate(){
+      return m_gyro.getRate();
+    }
+    
+    
+    @Override
+    public void periodic() {
+      // This method will be called once per scheduler run
+      m_pose = m_odometry.update(m_gyro.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition());
+    }
+    
+    /* Came with the template */
     public Command exampleMethodCommand() {
       return runOnce(
-          () -> {
-            /* one-time action goes here */
-          });
-    }
+        () -> {
+          /* one-time action goes here */
+        });
+      }
 }
