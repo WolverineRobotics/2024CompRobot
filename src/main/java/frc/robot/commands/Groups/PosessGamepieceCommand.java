@@ -2,6 +2,7 @@ package frc.robot.commands.Groups;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
+import frc.robot.InputSystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
@@ -55,6 +56,11 @@ public class PosessGamepieceCommand extends Command{
     public boolean isFinished() {
         // return (shooter.posessionLimitSwitch.get() && !shooter.shooterLimitSwitch.get());
         // return (!shooter.shooterLimitSwitch.get());
-        return false;
+
+        // Cancel Command 
+        if (InputSystem.AutoShutdown()) {
+            return true;
+        }
+        else {return false;}
     }
 }
