@@ -71,7 +71,8 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
       new TrapezoidProfile.Constraints(OperatorConstants.kMaxDriveVelocity, OperatorConstants.kMaxDriveAcceleration)), 0
     );
  
-    getController().setTolerance(0);
+    // Set Tolerance For Rotating 
+    getController().setTolerance(15);
 
     /* Setup base drivetrain */ 
     // CANSparkMax _leftFollower = new CANSparkMax(Constants.LEFT_MOTOR_1, MotorType.kBrushless);

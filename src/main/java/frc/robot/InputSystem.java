@@ -35,13 +35,13 @@ public class InputSystem {
     public static boolean SpinShooterEarly(){ return oController.getXButtonPressed(); } 
     public static boolean AutoResetAngle(){ return oController.getBButtonPressed(); } 
 
-    // Intake Controls
+    // Manual Intake Controls
     public static int ManualIntake() {return oController.getPOV(180); }
     public static int ManualOuttake() {return oController.getPOV(0); }
     
     // Manual Controls for pivots
-    public static double ManualIntakePivot(){ return oController.getLeftY(); } 
-    public static double ManualShooterPivot(){ return oController.getRightY(); } 
+    public static double ManualIntakePivot(){ return oController.getRightY(); } 
+    public static double ManualShooterPivot(){ return oController.getLeftY(); } 
     public static double ClimberController(){ return ((oController.getLeftTriggerAxis() * 1) + (oController.getRightTriggerAxis() * -1)); } 
 
     // Manual Climb

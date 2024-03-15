@@ -24,19 +24,19 @@ public class RotateDriveCommand extends Command{
     public void execute() {
         // Check For Possible Inputs
         if (InputSystem.FaceForward()) {
-            rotate.getController().setGoal(0);
+            rotate.getController().setGoal(Constants.Positional.kFaceForward);
         }
 
         if (InputSystem.FaceLeft()) {
-            rotate.getController().setGoal(-90);
+            rotate.getController().setGoal(Constants.Positional.kFaceLeft);
         }
 
         if (InputSystem.FaceRight()) {
-            rotate.getController().setGoal(90);
+            rotate.getController().setGoal(Constants.Positional.kFaceRight);
         }
 
         if (InputSystem.FaceDriver()) {
-            rotate.getController().setGoal(0);
+            rotate.getController().setGoal(Constants.Positional.kFaceDriver);
         }
     }
 

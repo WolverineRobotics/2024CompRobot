@@ -74,6 +74,12 @@ public final class Constants {
 
   
   public static class Positional {
+
+    // Rotate Heading Angles
+    public static final int kFaceForward = 0;
+    public static final int kFaceDriver = -180;
+    public static final int kFaceLeft = 90;
+    public static final int kFaceRight = -90;
     
     // Max and min positions for subsystems
     public static final int kShooterMaxPosition = 0;
