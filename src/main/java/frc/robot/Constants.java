@@ -6,10 +6,10 @@ package frc.robot;
 
 public final class Constants {
   
-  public static final int LEFT_MOTOR_1 = 2; // Left Side (Behind the Battery (bumpers!!!!))
-  public static final int LEFT_MOTOR_2 = 4;
-  public static final int RIGHT_MOTOR_1 = 1; // Right Side (Behind the Battery (bumpers!!!!))
-  public static final int RIGHT_MOTOR_2 = 3;
+  public static final int LEFT_MOTOR_1 = 5; // Left Side (Behind the Battery (bumpers!!!!))
+  public static final int LEFT_MOTOR_2 = 6;
+  public static final int RIGHT_MOTOR_1 = 8; // Right Side (Behind the Battery (bumpers!!!!))
+  public static final int RIGHT_MOTOR_2 = 7;
   
   public static final int kShooterLimitSwitchChannel = 0;
   public static final int kSPosessionLimitSwitchChannel = 1;
@@ -17,7 +17,7 @@ public final class Constants {
 
   public static final int kDriverEncoderDistanceConversionFactor= 7;
 
-  public static final int PIGEON_ID = 3;
+  public static final int PIGEON_ID = 1;
 
   /* Driving Constants */
   public static final double X_SPEEDREDUCTION = 0.6;
@@ -35,7 +35,7 @@ public final class Constants {
     public static final int kOperatorControllerPort = 1;
     
     /* CAN ID constants */
-    public static final int kPigeonId = 3;
+    public static final int kPigeonId = 1;
     
     public static final int kLeftShooterMotor1 = 0; 
     public static final int kRightShooterMotor1 = 0; 
@@ -43,17 +43,8 @@ public final class Constants {
     public static final int kLeftMotor2 = 0; 
     public static final int kRightMotor2 = 0;
 
-    public static final int kLeftMotorEncoder_A = 5; 
-    public static final int kLeftMotorEncoder_B = 6;
-
-    public static final int kRightMotorEncoder_A = 7; 
-    public static final int kRightMotorEncoder_B = 8;
-
-    public static final int kIntakePivotMotor = 14; 
-    public static final int kRollerMotor = 10;
-    
-    public static final int kPivotMotor = 15;
-    public static final int kIntakeMotor = 16;
+    public static final int kIntakePivotMotor = 3; 
+    public static final int kIntakeMotor = 2;
 
     /* Trapezoidal constraints */
     public static final int kMaxIntakePivotVelocity = 125;
@@ -85,7 +76,7 @@ public final class Constants {
     
     // For Intaking from source(shooter) or ground (intake)
     public static final int kShooterIntakingPosition = 10;
-    public static final int kIntakeIntakingPosition = 205;
+    public static final int kIntakeIntakingPosition = 45;
 
     // For regular feeding to shooter 
     public static final int kShooterNonConflictPosition = 90;

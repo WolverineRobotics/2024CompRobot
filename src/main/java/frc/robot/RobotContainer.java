@@ -41,7 +41,7 @@ public class RobotContainer {
 
   /* Intake */
   private IntakeSubsystem m_intake = new IntakeSubsystem();
-  private IntakeSubsystem m_intakecommand = new IntakeSubsystem();
+  // private IntakeSubsystem m_intakecommand = new IntakeSubsystem();
   
   /* Controllers */ 
   public static CommandXboxController m_driverController =
