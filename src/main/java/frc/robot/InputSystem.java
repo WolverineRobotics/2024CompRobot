@@ -33,7 +33,7 @@ public class InputSystem {
     /* OPERATOR CONTROLS */
 
     public static boolean SpinShooterEarly(){ return oController.getXButtonPressed(); } 
-    //public static boolean UndefinedBind2(){ return oController.getBButtonPressed(); } 
+    public static boolean AutoResetAngle(){ return oController.getBButtonPressed(); } 
 
     // Intake Controls
     public static int ManualIntake() {return oController.getPOV(180); }
@@ -42,11 +42,11 @@ public class InputSystem {
     // Manual Controls for pivots
     public static double ManualIntakePivot(){ return oController.getLeftY(); } 
     public static double ManualShooterPivot(){ return oController.getRightY(); } 
-    public static double RollerControl(){ return ((oController.getLeftTriggerAxis() * 1) + (oController.getRightTriggerAxis() * -1)); } 
+    public static double ClimberController(){ return ((oController.getLeftTriggerAxis() * 1) + (oController.getRightTriggerAxis() * -1)); } 
 
     // Manual Climb
-    public static boolean RaiseLeftClimber() {return oController.getLeftBumper();}
-    public static boolean RaiseRightClimber() {return oController.getRightBumper();}
+    public static boolean AutoIntake() {return oController.getLeftBumper();}
+    public static boolean Shoot() {return oController.getRightBumper();}
 
     // Cancel Operator Commands  
     public static boolean AutoShutdown(){ return oController.getYButtonPressed(); } 

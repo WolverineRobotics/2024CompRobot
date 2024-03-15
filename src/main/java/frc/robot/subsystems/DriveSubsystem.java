@@ -71,7 +71,6 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
       new TrapezoidProfile.Constraints(OperatorConstants.kMaxDriveVelocity, OperatorConstants.kMaxDriveAcceleration)), 0
     );
  
-    setGoal(0);
     getController().setTolerance(0);
 
     /* Setup base drivetrain */ 
