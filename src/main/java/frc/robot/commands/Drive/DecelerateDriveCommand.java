@@ -24,7 +24,6 @@ public class DecelerateDriveCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    
     // For Deceleration
     double yspeedReduction = Constants.Y_SPEED_REDUCTION;
     double xspeedReduction = Constants.X_SPEEDREDUCTION;

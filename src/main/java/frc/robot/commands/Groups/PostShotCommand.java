@@ -3,6 +3,7 @@ package frc.robot.commands.Groups;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.Input;
+import frc.robot.InputSystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
@@ -41,6 +42,10 @@ public class PostShotCommand extends Command{
     @Override
     public boolean isFinished() {
         // return shooter.getController().atGoal() && intake.getController().atGoal();
-        return intake.getController().atGoal();
+        // Cancel Command 
+        if (InputSystem.AutoShutdown()) {
+            return true;
+        }
+        else {return intake.getController().atGoal();}
     }
 }
