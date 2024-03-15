@@ -28,6 +28,14 @@ public class Input {
         return (opController.getRightTriggerAxis());
     }
 
+    public static boolean AmpScore(){
+        return (opController.getLeftBumper());
+    }
+
+    public static double rockOnTheGround(){
+        return (opController.getRightY() * 0.3);
+    }
+
     public static boolean waterOnTheHill(){
         return (opController.getRightBumper());
     }

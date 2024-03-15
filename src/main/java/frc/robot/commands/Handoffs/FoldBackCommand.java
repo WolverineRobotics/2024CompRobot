@@ -18,6 +18,7 @@ public class FoldBackCommand extends Command{
     @Override
     public void initialize() {
         intake.setGoal(Constants.Positional.kIntakeDefaultFeedPosition); 
+        intake.Brake();
         intake.enable();
     }
     

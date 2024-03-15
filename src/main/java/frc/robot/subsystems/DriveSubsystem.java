@@ -41,21 +41,22 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 public class DriveSubsystem extends ProfiledPIDSubsystem {
 
   public static DifferentialDrive driveTrain;
-  private static DifferentialDriveKinematics m_kinematics;
-  public static DifferentialDriveOdometry m_odometry;
+  private static DifferentialDriveKinematics mKinematics;
+  public static DifferentialDriveOdometry mOdometry;
   // public static DifferentialDrivePoseEstimator --- maybe use later
-  private Pigeon2 m_gyro;
+  private Pigeon2 mGyro;
   private RelativeEncoder leftEncoder, rightEncoder;
   //private SparkAbsoluteEncoder leftEncoder1, rightEncoder1;
   //private final Encoder _l = 
-  private Pose2d start_pose, m_pose;
+  private Pose2d startPose, mPose;
 
-  private CANSparkMax _leftMaster;//= new CANSparkMax(Constants.LEFT_MOTOR_1, MotorType.kBrushless);
-  private CANSparkMax _rightMaster;// = new CANSparkMax(Constants.RIGHT_MOTOR_1, MotorType.kBrushless);
+  private CANSparkMax leftMaster;//= new CANSparkMax(Constants.LEFT_MOTOR_1, MotorType.kBrushless);
+  private CANSparkMax rightMaster;// = new CANSparkMax(Constants.RIGHT_MOTOR_1, MotorType.kBrushless);
 
-  private double track_width = 25;
-  private double wheel_radius = 3;
-  private double wheel_radius_metres = Units.inchesToMeters(wheel_radius);
+  private double trackWidth = 25;
+  private double wheelRadius = 3;
+  private double wheelRadiusMeters = Units.inchesToMeters(wheelRadius);
+  private double encoderPositionAverage;
 
   private final PIDController left_pid = new PIDController(0.1, 0.03, 0.05);
   private final PIDController right_pid = new PIDController(0.1, 0.03, 0.05);
@@ -75,25 +76,25 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
     getController().setTolerance(15);
 
     /* Setup base drivetrain */ 
-    // CANSparkMax _leftFollower = new CANSparkMax(Constants.LEFT_MOTOR_1, MotorType.kBrushless);
-    _leftMaster = new CANSparkMax(Constants.LEFT_MOTOR_1, MotorType.kBrushless);
-    // CANSparkMax _rightFollower = new CANSparkMax(Constants.RIGHT_MOTOR_1, MotorType.kBrushless);
-    _rightMaster = new CANSparkMax(Constants.RIGHT_MOTOR_1, MotorType.kBrushless);
-    
-    // _leftFollower.follow(_leftMaster);
-    // _rightFollower.follow(_rightMaster);
+    leftMaster = new CANSparkMax(Constants.LEFT_MOTOR_1, MotorType.kBrushless);
+    CANSparkMax leftFollower = new CANSparkMax(Constants.LEFT_MOTOR_2, MotorType.kBrushless);
 
+    rightMaster = new CANSparkMax(Constants.RIGHT_MOTOR_1, MotorType.kBrushless);
+    CANSparkMax rightFollower = new CANSparkMax(Constants.RIGHT_MOTOR_2, MotorType.kBrushless);
     
-    _rightMaster.setInverted(true);
-    _leftMaster.setInverted(true);
+    leftFollower.follow(leftMaster);
+    rightFollower.follow(rightMaster);
     
-    _leftMaster.setIdleMode(IdleMode.kBrake);
-    _rightMaster.setIdleMode(IdleMode.kBrake);
+    rightMaster.setInverted(true);
+    leftMaster.setInverted(true);
     
-    // _leftFollower.setIdleMode(IdleMode.kBrake);
-    // _rightFollower.setIdleMode(IdleMode.kBrake);
+    leftMaster.setIdleMode(IdleMode.kBrake);
+    rightMaster.setIdleMode(IdleMode.kBrake);
     
-    driveTrain = new DifferentialDrive(_leftMaster, _rightMaster);
+    leftFollower.setIdleMode(IdleMode.kBrake);
+    rightFollower.setIdleMode(IdleMode.kBrake);
+    
+    driveTrain = new DifferentialDrive(leftMaster, rightMaster);
     driveTrain.setSafetyEnabled(false);
 
     // slew = new SlewRateLimiter(0.5, 0.5, 0);
@@ -103,32 +104,34 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
     
     
     // Kinematics
-    m_kinematics = new DifferentialDriveKinematics(Units.inchesToMeters(track_width));
+    mKinematics = new DifferentialDriveKinematics(Units.inchesToMeters(trackWidth));
     
     // need device id
-    m_gyro = new Pigeon2(Constants.PIGEON_ID);
-    m_gyro.reset();
+    mGyro = new Pigeon2(Constants.PIGEON_ID);
+    mGyro.reset();
     
-    leftEncoder = _leftMaster.getEncoder();
-    rightEncoder = _rightMaster.getEncoder();
+    leftEncoder = leftMaster.getEncoder();
+    rightEncoder = rightMaster.getEncoder();
     
     // rightEncoder.setInverted(true);
     
     leftEncoder.setPosition(0);
     rightEncoder.setPosition(0);
+
     float left_counts_per_rev = leftEncoder.getCountsPerRevolution();
     float right_counts_per_rev = rightEncoder.getCountsPerRevolution();
-    leftEncoder.setPositionConversionFactor(6);
-    rightEncoder.setPositionConversionFactor(6);
+    
+    leftEncoder.setPositionConversionFactor(Constants.kDriverEncoderDistanceConversionFactor);
+    rightEncoder.setPositionConversionFactor(Constants.kDriverEncoderDistanceConversionFactor);
     
     double x = 0;
     double y = 0;
     // double x = SmartDashboard.getNumber("starting_x", 0);
     // double y = SmartDashboard.getNumber("starting_y", 0);
     
-    start_pose = new Pose2d(
+    startPose = new Pose2d(
       new Translation2d(x, y),
-      m_gyro.getRotation2d()
+      mGyro.getRotation2d()
     );
       
     m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition(), start_pose);
@@ -156,16 +159,16 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
   // Tele-Op Driving 
   public void ArcadeDrive(){
     // driveTrain.arcadeDrive(Input.getHorizontal() * 0.3f, slew.calculate(Input.getVertical()) * 0.3f);
-    driveTrain.arcadeDrive(Input.getHorizontal() * 0.4f, Input.getVertical() * 0.4f);
+    driveTrain.arcadeDrive(Input.getHorizontal() * 0.f, Input.getVertical());
     
     // SmartDashboard.putNumber("[DRIVE] Left Encoder", leftEncoder.getPosition());
     // SmartDashboard.putNumber("[DRIVE] Right Encoder", rightEncoder.getPosition());
     // SmartDashboard.putNumber("[DRIVE] Gyroscope Yaw", m_gyro.getYaw().getValueAsDouble());
   }
 
-  public Pose2d GetPose(){ return m_odometry.getPoseMeters(); }
-  public Pigeon2 GetPigeon(){ return m_gyro; } 
-  public double GetHeading(){ return m_pose.getRotation().getDegrees();}
+  public Pose2d GetPose(){ return mOdometry.getPoseMeters(); }
+  public Pigeon2 GetPigeon(){ return mGyro; } 
+  public double GetHeading(){ return mPose.getRotation().getDegrees();}
 
   // if (DriverStation.getAlliance() == DriverStation.Alliance.Red){
   //   new DifferentialDrivePoseEstimator(
@@ -187,28 +190,29 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
   public DifferentialDriveWheelSpeeds GetWheelSpeeds() {
     return new DifferentialDriveWheelSpeeds(
       rightEncoder.getVelocity(),
-      leftEncoder.getVelocity());
-    }
-    
-    public void SetDriveVoltages(double l_volts, double r_volts){
-      _rightMaster.setVoltage(r_volts);
-      _leftMaster.setVoltage(l_volts);
-      driveTrain.feed();
-    }
-    
-    public void ResetGyro(){
-      m_gyro.reset();
-    }
-    
-    public double GetTurnRate(){
-      return m_gyro.getRate();
-    }
-    
+      leftEncoder.getVelocity()
+      );
+  }
+  
+  public void SetDriveVoltages(double l_volts, double r_volts){
+    rightMaster.setVoltage(r_volts);
+    leftMaster.setVoltage(l_volts);
+    driveTrain.feed();
+  }
+  
+  public void ResetGyro(){
+    mGyro.reset();
+  }
+  
+  public double GetTurnRate(){
+    return mGyro.getRate();
+  }
+  
     
     @Override
     public void periodic() {
       // This method will be called once per scheduler run
-      m_pose = m_odometry.update(m_gyro.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition());
+      mPose = mOdometry.update(mGyro.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition());
     }
     
     /* Came with the template */

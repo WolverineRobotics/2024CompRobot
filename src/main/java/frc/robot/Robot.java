@@ -23,7 +23,7 @@ private Command m_autonomousCommand;
     m_robotContainer = new RobotContainer();
     
     // Set to false if there is not in fact a gamepiece on starting config.
-    has_gamepiece = true;
+    has_gamepiece = false;
     // Properly carrying the gamepiece
     controls_gamepiece = false;
   }

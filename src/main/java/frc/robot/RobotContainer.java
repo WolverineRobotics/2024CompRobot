@@ -13,6 +13,7 @@ import frc.robot.commands.Drive.RotateDriveCommand;
 import frc.robot.commands.Groups.PosessGamepieceCommand;
 import frc.robot.commands.Groups.StartingPositionsCommand;
 import frc.robot.commands.Handoffs.FoldBackCommand;
+import frc.robot.commands.Handoffs.FoldOutCommand;
 import frc.robot.commands.Handoffs.StandardHandoffCommand;
 import frc.robot.commands.Limelight.LimelightAlignCommand;
 import frc.robot.subsystems.DriveSubsystem;
@@ -45,7 +46,7 @@ public class RobotContainer {
 
   /* Intake */
   private IntakeSubsystem m_intake = new IntakeSubsystem();
-  private IntakeSubsystem m_intakecommand = new IntakeSubsystem();
+  // private IntakeSubsystem m_intakecommand = new IntakeSubsystem();
   
   /* Controllers */ 
   public static CommandXboxController m_driverController =
@@ -91,6 +92,12 @@ public class RobotContainer {
   public void PostPosessionRoutine(){
     // CommandScheduler.getInstance().schedule(new StartingPositionsCommand(m_intake));
     CommandScheduler.getInstance().schedule(new FoldBackCommand(m_intake));
+  }
+
+  public void StartIntaking(){
+    CommandScheduler.getInstance().schedule(
+      new FoldOutCommand(m_intake)
+    );
   }
 
   public void AcquiredGamepiece(){

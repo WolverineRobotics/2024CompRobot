@@ -22,12 +22,14 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class IntakeSubsystem extends ProfiledPIDSubsystem {
 
     public static CANSparkMax pivotMotor, intakeMotor;
-    public static RelativeEncoder pivotCanEncoder, rightCanEncoder;
+    public static RelativeEncoder pivotCanEncoder; // ,rightCanEncoder; (this variable is null)
     public static double pivot_KP = 0.05;
+    private final DigitalInput intakeLimitSwitch = new DigitalInput(0);
     
     private boolean intaking;
     
-    private final DigitalInput limitSwitch= new DigitalInput(Constants.kShooterLimitSwitchChannel);
+    // private final DigitalInput noteLimitSwitch= new DigitalInput(Constants.kShooterLimitSwitchChannel);
+    // private final DigitalInput zeroPosLimitSwitch= new DigitalInput(Constants.kShooterLimitSwitchChannel);
 
     public IntakeSubsystem(){
 
@@ -47,7 +49,9 @@ public class IntakeSubsystem extends ProfiledPIDSubsystem {
         //pivotCanEncoder.setInverted(true);
         pivotCanEncoder = pivotMotor.getEncoder();
         pivotCanEncoder.setPosition(0);
-        setGoal(10);
+        pivotCanEncoder.setPositionConversionFactor(1);
+        pivotCanEncoder.setVelocityConversionFactor(1);
+        // setGoal(10);
         getController().setTolerance(2);
         
         
@@ -55,51 +59,78 @@ public class IntakeSubsystem extends ProfiledPIDSubsystem {
         pivotMotor.setIdleMode(IdleMode.kBrake);
         intakeMotor.setIdleMode(IdleMode.kBrake);
         
-        
-        // SmartDashboard logging
-        SmartDashboard.putNumber("[INTAKE] Intake Current", getIntakeVoltage());
-        SmartDashboard.putNumber("[INTAKE] Right Pivot Velocity", pivotMotor.get());
-        SmartDashboard.putNumber("[INTAKE] Left Intake Velocity", pivotMotor.get());
-        SmartDashboard.putNumber("[INTAKE] Intake Position", rightCanEncoder.getPosition());
-        SmartDashboard.putNumber("[INTAKE] PID Goal", getController().getGoal().position);
-        
         intaking = false;
     }
-
-
+    
+    
     @Override
     public void periodic(){
-
+        // super.periodic();
+        
         /* Checks if the subsystem has the gamepiece or not and changes robot variables accordingly */
-
+        
         // The robot must be in full control if only the possesion switch is true 
-        if(limitSwitch.get() && !Robot.has_gamepiece){
-            Robot.has_gamepiece = true;
-            RobotContainer.instance.AcquiredGamepiece();
-        }
+        // if(noteLimitSwitch.get() && !Robot.has_gamepiece){
+        //     Robot.has_gamepiece = true;
+        //     RobotContainer.instance.AcquiredGamepiece();
+        //     intaking = false;
+        // }
+        // else if(!noteLimitSwitch.get()){
+        //     Robot.has_gamepiece = false;
+        // }
 
         if(!Robot.has_gamepiece){ 
+            if(Input.fireInTheHole() > 0){
 
-            setIntakeSpeed(Input.fireInTheHole());
-            if(Input.fireInTheHole() < 0 && !intaking){
-                setGoal(Constants.Positional.kIntakeIntakingPosition);
-                intaking = true;
+                if(intakeLimitSwitch.get()){
+                    setIntakeSpeed(0);
+                } else {
+                     setIntakeSpeed(Input.fireInTheHole());
+                }
+
+            }
+            else if(Input.AmpScore()){
+                setIntakeSpeed(-0.9);
             }
 
-            else if(intaking && Input.fireInTheHole() == 0){
-                setGoal(Constants.Positional.kIntakeSubwooferHandoffPosition);
-                intaking = false;
+            else{
+                setIntakeSpeed(0);
             }
+            // if(Input.fireInTheHole() > 0 && !intaking){
+            //     RobotContainer.instance.StartIntaking();
+            //     intaking = true;
+            // }
+            
+            // else if(intaking && Input.fireInTheHole() == 0){
+            //     RobotContainer.instance.PostPosessionRoutine();
+            //     intaking = false;
+            // }
         }
         else{
             if(intaking){
                 intaking = false;
             }
+            
+            if(Input.driveController.getRightBumper()){
+                setIntakeSpeed(0.95);
+            }
+            else{
+                setIntakeSpeed(0);
+            }
+
+            // SmartDashboard logging
+            SmartDashboard.putNumber("[INTAKE] Intake Current", getIntakeVoltage());
+            SmartDashboard.putNumber("[INTAKE] Right Pivot Velocity", pivotMotor.get());
+            SmartDashboard.putNumber("[INTAKE] Left Intake Velocity", pivotMotor.get());
+            SmartDashboard.putNumber("[INTAKE] Intake Position", pivotCanEncoder.getPosition()); // Change back to pivotMotor if something is wrong
+            SmartDashboard.putNumber("[INTAKE] PID Goal", getController().getGoal().position);
+
+            System.out.println(pivotCanEncoder.getPosition());
         }
-
+        
     }
-
-
+    
+    
     public void setIntakeVoltage(double voltage){
         pivotMotor.setVoltage(voltage);
         intakeMotor.setVoltage(voltage);

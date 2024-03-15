@@ -7,8 +7,8 @@ public class InputSystem {
     // Controllers
     private static XboxController dController = new XboxController(0);
     private static XboxController oController = new XboxController(1);
-    public static XboxController Driver(){ return dController; } 
-    public static XboxController Operator(){ return oController; }
+    public static XboxController getDriver(){ return dController; } 
+    public static XboxController getOperator(){ return oController; }
 
     
     // 0 => Robot has no gamepiece
@@ -16,16 +16,18 @@ public class InputSystem {
     public static int input_mode = 0;
     
     // For drivetrain only
-    public static double SpeedLimit(){ return 1; } 
+    public static double SpeedLimit(){ return 1 - dController.getRightTriggerAxis() * 0.5; } 
 
 
     /* DRIVER CONTROLS */
     public static double DriveSpeed(){ return dController.getLeftY() * SpeedLimit(); } 
-    public static double DriveRot(){ return dController.getRightX(); } 
+    public static double DriveRot(){ return dController.getRightX() * SpeedLimit() * 0.5f; } 
+
     public static boolean FaceForward(){ return dController.getYButton(); } 
     public static boolean FaceDriver(){ return dController.getAButton(); } 
     public static boolean FaceRight(){  return dController.getBButton();  } 
     public static boolean FaceLeft(){ return dController.getXButton(); } 
+  
     public static boolean Align(){ return dController.getRightBumper(); }
     public static boolean AmpAlign(){ return dController.getLeftBumper(); }
     public static double Decelerate() {return dController.getLeftTriggerAxis(); }
