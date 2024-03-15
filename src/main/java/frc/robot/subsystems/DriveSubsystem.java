@@ -51,6 +51,7 @@ public class DriveSubsystem extends SubsystemBase {
   private double track_width = 25;
   private double wheel_radius = 3;
   private double wheel_radius_metres = Units.inchesToMeters(wheel_radius);
+  private double encoderPositionAverage;
 
   private final PIDController left_pid = new PIDController(0.1, 0.03, 0.05);
   private final PIDController right_pid = new PIDController(0.1, 0.03, 0.05);
@@ -62,24 +63,26 @@ public class DriveSubsystem extends SubsystemBase {
   public DriveSubsystem() {
 
     /* Setup base drivetrain */ 
-    // CANSparkMax _leftFollower = new CANSparkMax(Constants.LEFT_MOTOR_1, MotorType.kBrushless);
     _leftMaster = new CANSparkMax(Constants.LEFT_MOTOR_1, MotorType.kBrushless);
-    // CANSparkMax _rightFollower = new CANSparkMax(Constants.RIGHT_MOTOR_1, MotorType.kBrushless);
+    CANSparkMax _leftFollower = new CANSparkMax(Constants.LEFT_MOTOR_2, MotorType.kBrushless);
+
     _rightMaster = new CANSparkMax(Constants.RIGHT_MOTOR_1, MotorType.kBrushless);
+    CANSparkMax _rightFollower = new CANSparkMax(Constants.RIGHT_MOTOR_2, MotorType.kBrushless);
     
-    // _leftFollower.follow(_leftMaster);
-    // _rightFollower.follow(_rightMaster);
+    _leftFollower.follow(_leftMaster);
+    _rightFollower.follow(_rightMaster);
     
     // _leftFollower.setInverted(InvertType.FollowMaster);
     // _rightFollower.setInverted(InvertType.FollowMaster);
+
     _rightMaster.setInverted(true);
     _leftMaster.setInverted(true);
     
     _leftMaster.setIdleMode(IdleMode.kBrake);
     _rightMaster.setIdleMode(IdleMode.kBrake);
     
-    // _leftFollower.setIdleMode(IdleMode.kBrake);
-    // _rightFollower.setIdleMode(IdleMode.kBrake);
+    _leftFollower.setIdleMode(IdleMode.kBrake);
+    _rightFollower.setIdleMode(IdleMode.kBrake);
     
     driveTrain = new DifferentialDrive(_leftMaster, _rightMaster);
     driveTrain.setSafetyEnabled(false);
@@ -166,23 +169,24 @@ public class DriveSubsystem extends SubsystemBase {
   public DifferentialDriveWheelSpeeds GetWheelSpeeds() {
     return new DifferentialDriveWheelSpeeds(
       rightEncoder.getVelocity(),
-      leftEncoder.getVelocity());
-    }
-    
-    public void SetDriveVoltages(double l_volts, double r_volts){
-      _rightMaster.setVoltage(r_volts);
-      _leftMaster.setVoltage(l_volts);
-      driveTrain.feed();
-    }
-    
-    public void ResetGyro(){
-      m_gyro.reset();
-    }
-    
-    public double GetTurnRate(){
-      return m_gyro.getRate();
-    }
-    
+      leftEncoder.getVelocity()
+      );
+  }
+  
+  public void SetDriveVoltages(double l_volts, double r_volts){
+    _rightMaster.setVoltage(r_volts);
+    _leftMaster.setVoltage(l_volts);
+    driveTrain.feed();
+  }
+  
+  public void ResetGyro(){
+    m_gyro.reset();
+  }
+  
+  public double GetTurnRate(){
+    return m_gyro.getRate();
+  }
+  
     
     @Override
     public void periodic() {
