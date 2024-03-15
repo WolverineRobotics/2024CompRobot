@@ -133,8 +133,9 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
       new Translation2d(x, y),
       mGyro.getRotation2d()
     );
-      
-    m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition(), start_pose);
+     
+    mOdometry = new DifferentialDriveOdometry(mGyro.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition(), startPose);
+
     }
 
     // Profiled PID Commands
