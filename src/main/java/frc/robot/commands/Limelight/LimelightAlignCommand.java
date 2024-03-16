@@ -49,10 +49,10 @@ public class LimelightAlignCommand extends Command{
         if(turn > limit){turn = limit;}
 
         SmartDashboard.putNumber("[LIMELIGHT] Turn", turn);
-        SmartDashboard.putNumber("[LIMELIGHT] TX", LimelightHelpers.getTX(""));
-        SmartDashboard.putNumber("[LIMELIGHT] TY", LimelightHelpers.getTY(""));
-        SmartDashboard.putNumber("[LIMELIGHT] TA", LimelightHelpers.getTA(""));
-        SmartDashboard.putBoolean("[LIMELIGHT] TV", LimelightHelpers.getTV(""));
+        SmartDashboard.putNumber("[LIMELIGHT] TX", getLimelightX());
+        SmartDashboard.putNumber("[LIMELIGHT] TY", getLimelightY());
+        SmartDashboard.putNumber("[LIMELIGHT] TA", getLimelightA());
+        SmartDashboard.putBoolean("[LIMELIGHT] TV", getLimelightV());
 
         if(auto)
         {
