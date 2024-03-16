@@ -27,7 +27,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.DriverStation;
 
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.*;
@@ -49,8 +48,7 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
 
   private Pose2d startPose, m_Pose;
 
-  private CANSparkMax leftMaster, leftFollower;
-  private CANSparkMax rightMaster, rightFollower;
+  private CANSparkMax leftMaster, leftFollower, rightMaster, rightFollower;
 
   private double trackWidth = 25;
   private double wheelRadius = 3;

@@ -47,9 +47,6 @@ public class LimelightSubsystem extends ProfiledPIDSubsystem {
         SmartDashboard.putNumber("LL_capture_ping", captureLatency);
         SmartDashboard.putNumber("LL_pipeline_ping", pipelineLatency);
         SmartDashboard.putNumber("LL_AprilTag_id", tagId);
-        
-        
-        setDefaultCommand(null);
     }
 
     /* DISTANCE CALCULATION 
