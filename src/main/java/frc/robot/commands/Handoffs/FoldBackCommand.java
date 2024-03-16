@@ -18,7 +18,6 @@ public class FoldBackCommand extends Command{
     @Override
     public void initialize() {
         intake.setGoal(Constants.Positional.kIntakeDefaultFeedPosition); 
-        intake.Brake();
         intake.enable();
     }
     
@@ -30,7 +29,6 @@ public class FoldBackCommand extends Command{
     @Override
     public void end(boolean interrupted) {
         intake.disable();
-        intake.Coast();
     }
 
     // Returns true when the command should end.

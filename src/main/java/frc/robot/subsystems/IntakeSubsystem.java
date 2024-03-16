@@ -56,7 +56,6 @@ public class IntakeSubsystem extends ProfiledPIDSubsystem {
         // setGoal(10);
         getController().setTolerance(2);
         
-        
         // Initializing Idle Modes for Motors
         pivotMotor.setIdleMode(IdleMode.kBrake);
         intakeMotor.setIdleMode(IdleMode.kBrake);
@@ -84,7 +83,7 @@ public class IntakeSubsystem extends ProfiledPIDSubsystem {
         if(!Robot.has_gamepiece){ 
             if(Input.fireInTheHole() > 0){
 
-                if(intakeLimitSwitch.get()){
+                if(intakeLimitSwitch.get()){ 
                     setIntakeSpeed(0);
                 } else {
                      setIntakeSpeed(Input.fireInTheHole());
@@ -148,8 +147,9 @@ public class IntakeSubsystem extends ProfiledPIDSubsystem {
     
     public void setIntakeSpeed(double speed){ intakeMotor.set(speed); }
     
-    public void Brake(){ intakeMotor.setIdleMode(IdleMode.kBrake); }
-    public void Coast(){ intakeMotor.setIdleMode(IdleMode.kCoast); }
+    /* I'm not sure why we have methods for brake and coasting?? */
+    // public void Brake(){ intakeMotor.setIdleMode(IdleMode.kBrake); }
+    // public void Coast(){ intakeMotor.setIdleMode(IdleMode.kCoast); }
 
     public double getIntakeVoltage(){ return pivotMotor.getOutputCurrent() * pivotMotor.getBusVoltage();}
 
@@ -161,8 +161,8 @@ public class IntakeSubsystem extends ProfiledPIDSubsystem {
 
     // Profiled PID derived methods
     protected void useOutput(double output, TrapezoidProfile.State setpoint){
-        SmartDashboard.putNumber("[INTAKE] pivot_output", output);
-        SmartDashboard.putNumber("[INTAKE] pivot setpoint", setpoint.position);
+        SmartDashboard.putNumber("[INTAKE PID] Pivot Output", output);
+        SmartDashboard.putNumber("[INTAKE PID] Pivot Setpoint", setpoint.position);
 
         if(!getController().atSetpoint()){ pivotMotor.set(output); }
         else{ pivotMotor.set(0); }

@@ -61,9 +61,10 @@ public class LimelightAlignCommand extends Command{
                 if (distance >= 2){throttle = -limit;}
                 else if(distance < 1.5){throttle = limit;}
                 else{throttle = 0;}
-                m_Drive.AutoDrive(-throttle, turn);
+                m_Drive.autoDrive(-throttle, turn);
             } 
-            else {m_Drive.Rotate(0);}
+            else {m_Drive.driveRotate(0);}
+            end();
         }
     }
 

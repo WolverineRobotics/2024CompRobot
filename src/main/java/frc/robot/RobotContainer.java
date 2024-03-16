@@ -5,7 +5,6 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Autos;
 import frc.robot.commands.DefaultCommands.DefaultDriveCommand;
 import frc.robot.commands.DefaultCommands.DefaultShootingCommand;
 import frc.robot.commands.Drive.DecelerateDriveCommand;
@@ -66,12 +65,12 @@ public class RobotContainer {
   public RobotContainer() {
 
     m_Drivecommand = new DefaultDriveCommand(m_Drive);
-    // m_shootingcommand = new DefaultShootingCommand(m_shooter);
     m_LimelightAlignCommand = new LimelightAlignCommand(m_Limelight);
+    // m_shootingcommand = new DefaultShootingCommand(m_shooter);
     
     CommandScheduler.getInstance().setDefaultCommand(m_Drive, m_Drivecommand);
-    // CommandScheduler.getInstance().setDefaultCommand(m_shooter, m_shootingcommand);
     CommandScheduler.getInstance().setDefaultCommand(m_Limelight, m_LimelightAlignCommand);
+    // CommandScheduler.getInstance().setDefaultCommand(m_shooter, m_shootingcommand);
 
     instance = this;
     // configureBindings();
@@ -115,9 +114,9 @@ public class RobotContainer {
   }
   
   public Command getAutonomousCommand() {
+    return null;
     // An example command will be run in autonomous
     // return Autos.exampleAuto(m_drive);
-    return null;
   }
   
 }
