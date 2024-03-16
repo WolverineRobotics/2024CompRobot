@@ -10,10 +10,10 @@ import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class DecelerateDriveCommand extends Command {
-  private final DriveSubsystem m_drive;
+  private final DriveSubsystem m_Drive;
 
   public DecelerateDriveCommand(DriveSubsystem subsystem) {
-    m_drive = subsystem;
+    m_Drive = subsystem;
     addRequirements(subsystem);
   }
 

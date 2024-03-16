@@ -8,11 +8,11 @@ import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class DefaultDriveCommand extends Command {
-  private final DriveSubsystem m_drive;
+  private final DriveSubsystem m_Drive;
 
-  public DefaultDriveCommand(DriveSubsystem drive_subsystem) {
-    m_drive = drive_subsystem;
-    addRequirements(drive_subsystem);
+  public DefaultDriveCommand(DriveSubsystem driveSubsystem) {
+    m_Drive = driveSubsystem;
+    addRequirements(driveSubsystem);
   }
 
   // Called when the command is initially scheduled.
@@ -22,7 +22,7 @@ public class DefaultDriveCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_drive.ArcadeDrive();
+    m_Drive.ArcadeDrive();
   }
 
   // Called once the command ends or is interrupted.

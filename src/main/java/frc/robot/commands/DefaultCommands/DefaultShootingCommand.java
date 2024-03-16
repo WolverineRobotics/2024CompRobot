@@ -6,11 +6,11 @@ import frc.robot.subsystems.ShooterSubsystem;
 
 public class DefaultShootingCommand extends Command{
 
-    private ShooterSubsystem m_shooter;
+    private ShooterSubsystem m_Shooter;
 
-    public DefaultShootingCommand(ShooterSubsystem shooter_subsystem){
-        m_shooter = shooter_subsystem;
-        addRequirements(shooter_subsystem);
+    public DefaultShootingCommand(ShooterSubsystem shooterSubsystem){
+        m_Shooter = shooterSubsystem;
+        addRequirements(shooterSubsystem);
     }
     // Called when the command is initially scheduled.
     @Override

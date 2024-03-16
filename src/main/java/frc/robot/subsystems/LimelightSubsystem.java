@@ -22,11 +22,11 @@ public class LimelightSubsystem extends ProfiledPIDSubsystem {
     private final static double Ki = 0;
     private final static double Kd = 0;
     
-    private double pid_output = 0;
-    private double pipeline_latency = 0;
-    private double capture_latency = 0;
+    private double pidOutput = 0;
+    private double pipelineLatency = 0;
+    private double captureLatency = 0;
 
-    private double tag_id = 0;
+    private double tagId = 0;
     
     public LimelightSubsystem(){
         super(
@@ -44,9 +44,9 @@ public class LimelightSubsystem extends ProfiledPIDSubsystem {
         SmartDashboard.putNumber("LL_ty", ty);
         SmartDashboard.putNumber("LL_ta", ta);
         
-        SmartDashboard.putNumber("LL_capture_ping", capture_latency);
-        SmartDashboard.putNumber("LL_pipeline_ping", pipeline_latency);
-        SmartDashboard.putNumber("LL_AprilTag_id", tag_id);
+        SmartDashboard.putNumber("LL_capture_ping", captureLatency);
+        SmartDashboard.putNumber("LL_pipeline_ping", pipelineLatency);
+        SmartDashboard.putNumber("LL_AprilTag_id", tagId);
         
         
         setDefaultCommand(null);
@@ -82,23 +82,23 @@ public class LimelightSubsystem extends ProfiledPIDSubsystem {
         //LimelightHelpers.getBotPose2d("");
         
         // Latencies
-        capture_latency = LimelightHelpers.getLatency_Capture("");
-        pipeline_latency = LimelightHelpers.getLatency_Pipeline("");
+        captureLatency = LimelightHelpers.getLatency_Capture("");
+        pipelineLatency = LimelightHelpers.getLatency_Pipeline("");
 
 
         //LimelightHelpers.getBotPose2d("");
         
         // detected April tag value
-        tag_id = LimelightHelpers.getFiducialID("");
+        tagId = LimelightHelpers.getFiducialID("");
 
         // https://docs.limelightvision.io/docs/docs-limelight/getting-started/best-practices
         // Explains that we need a static IP configuration before connecting to the field
     }
 
     public Pose2d TryPose(){
-        Pose2d estimated_pose;
+        Pose2d estimatedPose;
         if(LimelightHelpers.getTV("")){
-            estimated_pose = LimelightHelpers.getBotPose2d("");
+            estimatedPose = LimelightHelpers.getBotPose2d("");
         }
 
         return null;
@@ -107,11 +107,11 @@ public class LimelightSubsystem extends ProfiledPIDSubsystem {
     // Reads the auto alignment PID to the pid_output variable
     @Override
     protected void useOutput(double output, edu.wpi.first.math.trajectory.TrapezoidProfile.State setpoint) {
-        pid_output = output;
+        pidOutput = output;
     }
 
     public double ReadRotationalOutput(){
-        return pid_output;
+        return pidOutput;
     }
     
     @Override

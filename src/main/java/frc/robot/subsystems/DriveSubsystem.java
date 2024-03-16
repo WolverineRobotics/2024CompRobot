@@ -41,14 +41,15 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 public class DriveSubsystem extends ProfiledPIDSubsystem {
 
   public static DifferentialDrive driveTrain;
-  private static DifferentialDriveKinematics mKinematics;
-  public static DifferentialDriveOdometry mOdometry;
+  private static DifferentialDriveKinematics m_Kinematics;
+  public static DifferentialDriveOdometry m_Odometry;
   // public static DifferentialDrivePoseEstimator --- maybe use later
-  private Pigeon2 mGyro;
+  private Pigeon2 m_Gyro;
   private RelativeEncoder leftEncoder, rightEncoder;
+
   //private SparkAbsoluteEncoder leftEncoder1, rightEncoder1;
   //private final Encoder _l = 
-  private Pose2d startPose, mPose;
+  private Pose2d startPose, m_Pose;
 
   private CANSparkMax leftMaster;//= new CANSparkMax(Constants.LEFT_MOTOR_1, MotorType.kBrushless);
   private CANSparkMax rightMaster;// = new CANSparkMax(Constants.RIGHT_MOTOR_1, MotorType.kBrushless);
@@ -58,11 +59,11 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
   private double wheelRadiusMeters = Units.inchesToMeters(wheelRadius);
   private double encoderPositionAverage;
 
-  private final PIDController left_pid = new PIDController(0.1, 0.03, 0.05);
-  private final PIDController right_pid = new PIDController(0.1, 0.03, 0.05);
+  private final PIDController leftPid = new PIDController(0.1, 0.03, 0.05);
+  private final PIDController rightPid = new PIDController(0.1, 0.03, 0.05);
   private final RamseteController m_RamseteController = new RamseteController();
 
-  private SlewRateLimiter slew;
+  private SlewRateLimiter slewRate;
 
 
   public DriveSubsystem() {
@@ -104,11 +105,11 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
     
     
     // Kinematics
-    mKinematics = new DifferentialDriveKinematics(Units.inchesToMeters(trackWidth));
+    m_Kinematics = new DifferentialDriveKinematics(Units.inchesToMeters(trackWidth));
     
     // need device id
-    mGyro = new Pigeon2(Constants.PIGEON_ID);
-    mGyro.reset();
+    m_Gyro = new Pigeon2(Constants.PIGEON_ID);
+    m_Gyro.reset();
     
     leftEncoder = leftMaster.getEncoder();
     rightEncoder = rightMaster.getEncoder();
@@ -131,10 +132,10 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
     
     startPose = new Pose2d(
       new Translation2d(x, y),
-      mGyro.getRotation2d()
+      m_Gyro.getRotation2d()
     );
      
-    mOdometry = new DifferentialDriveOdometry(mGyro.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition(), startPose);
+    m_Odometry = new DifferentialDriveOdometry(m_Gyro.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition(), startPose);
 
     }
 
@@ -167,13 +168,13 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
     // SmartDashboard.putNumber("[DRIVE] Gyroscope Yaw", m_gyro.getYaw().getValueAsDouble());
   }
 
-  public Pose2d GetPose(){ return mOdometry.getPoseMeters(); }
-  public Pigeon2 GetPigeon(){ return mGyro; } 
-  public double GetHeading(){ return mPose.getRotation().getDegrees();}
+  public Pose2d GetPose(){ return m_Odometry.getPoseMeters(); }
+  public Pigeon2 GetPigeon(){ return m_Gyro; } 
+  public double GetHeading(){ return m_Pose.getRotation().getDegrees();}
 
   // if (DriverStation.getAlliance() == DriverStation.Alliance.Red){
   //   new DifferentialDrivePoseEstimator(
-  //     m_kinematics, 
+  //     m_Kinematics, 
   //     m_gyro.getRotation2d(),
   //     leftEncoder.getDistance(), 
   //     rightEncoder.getDistance() 
@@ -202,18 +203,18 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
   }
   
   public void ResetGyro(){
-    mGyro.reset();
+    m_Gyro.reset();
   }
   
   public double GetTurnRate(){
-    return mGyro.getRate();
+    return m_Gyro.getRate();
   }
   
     
     @Override
     public void periodic() {
       // This method will be called once per scheduler run
-      mPose = mOdometry.update(mGyro.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition());
+      m_Pose = m_Odometry.update(m_Gyro.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition());
     }
     
     /* Came with the template */

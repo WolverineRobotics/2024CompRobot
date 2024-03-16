@@ -31,28 +31,29 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 public class RobotContainer {
 
   /* Drive */
-  private DriveSubsystem m_drive = new DriveSubsystem();
-  private Command m_drivecommand = new DefaultDriveCommand(m_drive);
+  private DriveSubsystem m_Drive = new DriveSubsystem();
+  private Command m_Drivecommand = new DefaultDriveCommand(m_Drive);
 
   /* Noah */
   //private NoahDriveSubsystem m_Noah = new NoahDriveSubsystem();
+
   /* Limelight */
-  private LimelightSubsystem m_limelight = new LimelightSubsystem();
-  private Command m_limelightAlignCommand = new LimelightAlignCommand(m_limelight);
+  private LimelightSubsystem m_Limelight = new LimelightSubsystem();
+  private Command m_LimelightAlignCommand = new LimelightAlignCommand(m_Limelight);
 
   /* Shooter */
   // private ShooterSubsystem m_shooter = new ShooterSubsystem();
   // private Command m_shootingcommand = new DefaultShootingCommand(m_shooter);
 
   /* Intake */
-  private IntakeSubsystem m_intake = new IntakeSubsystem();
+  private IntakeSubsystem m_Intake = new IntakeSubsystem();
   // private IntakeSubsystem m_intakecommand = new IntakeSubsystem();
   
   /* Controllers */ 
-  public static CommandXboxController m_driverController =
+  public static CommandXboxController m_DriverController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
-  public static CommandXboxController m_operatorController =
+  public static CommandXboxController m_OperatorController =
       new CommandXboxController(OperatorConstants.kOperatorControllerPort);
 
   public static RobotContainer instance;
@@ -64,25 +65,25 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
-    m_drivecommand = new DefaultDriveCommand(m_drive);
+    m_Drivecommand = new DefaultDriveCommand(m_Drive);
     // m_shootingcommand = new DefaultShootingCommand(m_shooter);
-    m_limelightAlignCommand = new LimelightAlignCommand(m_limelight);
+    m_LimelightAlignCommand = new LimelightAlignCommand(m_Limelight);
     
-    CommandScheduler.getInstance().setDefaultCommand(m_drive, m_drivecommand);
+    CommandScheduler.getInstance().setDefaultCommand(m_Drive, m_Drivecommand);
     // CommandScheduler.getInstance().setDefaultCommand(m_shooter, m_shootingcommand);
-    CommandScheduler.getInstance().setDefaultCommand(m_limelight, m_limelightAlignCommand);
+    CommandScheduler.getInstance().setDefaultCommand(m_Limelight, m_LimelightAlignCommand);
 
     instance = this;
     // configureBindings();
   }
 
   private void configureBindings() {
-    m_driverController.leftBumper().whileTrue(new DecelerateDriveCommand(m_drive));
-    m_driverController.rightBumper().whileTrue(new LimelightAlignCommand(m_limelight));
+    m_DriverController.leftBumper().whileTrue(new DecelerateDriveCommand(m_Drive));
+    m_DriverController.rightBumper().whileTrue(new LimelightAlignCommand(m_Limelight));
   }
 
   public DriveSubsystem VroomVroom(){
-    return m_drive;
+    return m_Drive;
   }
 
   /*public NoahDriveSubsystem drive(){
@@ -91,12 +92,12 @@ public class RobotContainer {
   
   public void PostPosessionRoutine(){
     // CommandScheduler.getInstance().schedule(new StartingPositionsCommand(m_intake));
-    CommandScheduler.getInstance().schedule(new FoldBackCommand(m_intake));
+    CommandScheduler.getInstance().schedule(new FoldBackCommand(m_Intake));
   }
 
   public void StartIntaking(){
     CommandScheduler.getInstance().schedule(
-      new FoldOutCommand(m_intake)
+      new FoldOutCommand(m_Intake)
     );
   }
 
@@ -105,7 +106,7 @@ public class RobotContainer {
     // Schedules the handoff by default
 
     CommandScheduler.getInstance().schedule(
-      new FoldBackCommand(m_intake)
+      new FoldBackCommand(m_Intake)
     );
 
     // CommandScheduler.getInstance().schedule(

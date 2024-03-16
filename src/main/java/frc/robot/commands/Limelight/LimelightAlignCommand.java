@@ -14,19 +14,19 @@ import frc.robot.AprilTagData;
 
 public class LimelightAlignCommand extends Command{
 
-    private DriveSubsystem m_drive;
+    private DriveSubsystem m_Drive;
     private XboxController dController;
 
-    private LimelightSubsystem m_limelight;
+    private LimelightSubsystem mLimelight;
 
-    private double m_limelightThrottle = 0;
-    private double m_limelightTurn = 0;
+    private double m_LimelightThrottle = 0;
+    private double m_LimelightTurn = 0;
 
     public boolean m_AprilTaginSight = false;
 
     public LimelightAlignCommand(LimelightSubsystem limelight){
 
-        m_limelight = limelight;
+        mLimelight = limelight;
         addRequirements(limelight);
     }
 
@@ -61,9 +61,9 @@ public class LimelightAlignCommand extends Command{
                 if (distance >= 2){throttle = -limit;}
                 else if(distance < 1.5){throttle = limit;}
                 else{throttle = 0;}
-                m_drive.AutoDrive(-throttle, turn);
+                m_Drive.AutoDrive(-throttle, turn);
             } 
-            else {m_drive.Rotate(0);}
+            else {m_Drive.Rotate(0);}
         }
     }
 
@@ -107,15 +107,15 @@ public class LimelightAlignCommand extends Command{
         boolean tv = LimelightHelpers.getTV(""); // Valid Targeting (True/False))
         
         // The values in which we want the robot to turn/throttle upon detection
-        double m_limelightThrottle = 0;
-        double m_limelightTurn = 0;
+        double m_LimelightThrottle = 0;
+        double m_LimelightTurn = 0;
 
         // When there's no AprilTag detection
         if (tv != true)
         {
             m_AprilTaginSight = false;
-            m_limelightThrottle = 0;
-            m_limelightTurn = 0;
+            m_LimelightThrottle = 0;
+            m_LimelightTurn = 0;
             return;
         }
 
@@ -123,14 +123,14 @@ public class LimelightAlignCommand extends Command{
         
         // Will continuously drive forward until the set target area has been reached
         double driveForward = (DIST_BETWEEN - ta) * THROTTLE_AUTO;
-        m_limelightThrottle = driveForward;
+        m_LimelightThrottle = driveForward;
 
         // Will continuously rotate until it aligns
         double driveRotate = tx * STEER_AUTO;
-        m_limelightTurn = driveRotate;
+        m_LimelightTurn = driveRotate;
 
         // Set a speed restraint while driving forward
-        if  (m_limelightThrottle > MAX_SPEED){m_limelightThrottle = MAX_SPEED;} 
+        if  (m_LimelightThrottle > MAX_SPEED){m_LimelightThrottle = MAX_SPEED;} 
     }
 
     public boolean isFinished(){
@@ -150,14 +150,7 @@ public class LimelightAlignCommand extends Command{
     }
     
     public void end(){
-        m_limelightThrottle = 0.0;
-        m_limelightTurn = 0.0;
+        m_LimelightThrottle = 0.0;
+        m_LimelightTurn = 0.0;
     }
-
-    
-    //@Override
-    //protected double getMeasurement() {
-    //    return pigeon.getYaw();
-    //}
-    
 }

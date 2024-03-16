@@ -47,10 +47,12 @@ public class IntakeSubsystem extends ProfiledPIDSubsystem {
         // Initializing Encoders and PID starting config
         
         //pivotCanEncoder.setInverted(true);
+
         pivotCanEncoder = pivotMotor.getEncoder();
         pivotCanEncoder.setPosition(0);
         pivotCanEncoder.setPositionConversionFactor(1);
         pivotCanEncoder.setVelocityConversionFactor(1);
+
         // setGoal(10);
         getController().setTolerance(2);
         
@@ -106,28 +108,36 @@ public class IntakeSubsystem extends ProfiledPIDSubsystem {
             //     intaking = false;
             // }
         }
-        else{
-            if(intaking){
-                intaking = false;
-            }
+
+        // else{
+        //     if(intaking){
+        //         intaking = false;
+        //     }
             
-            if(Input.driveController.getRightBumper()){
-                setIntakeSpeed(0.95);
-            }
-            else{
-                setIntakeSpeed(0);
-            }
+        //     if(Input.driveController.getRightBumper()){
+        //         setIntakeSpeed(0.95);
+        //     }
+        //     else{
+        //         setIntakeSpeed(0);
+        //     }
+        // }
 
-            // SmartDashboard logging
-            SmartDashboard.putNumber("[INTAKE] Intake Current", getIntakeVoltage());
-            SmartDashboard.putNumber("[INTAKE] Right Pivot Velocity", pivotMotor.get());
-            SmartDashboard.putNumber("[INTAKE] Left Intake Velocity", pivotMotor.get());
-            SmartDashboard.putNumber("[INTAKE] Intake Position", pivotCanEncoder.getPosition()); // Change back to pivotMotor if something is wrong
-            SmartDashboard.putNumber("[INTAKE] PID Goal", getController().getGoal().position);
+        /*
+         * SmartDashboard Logging
+         * 
+         * who wants to take a bet that the SD values don't print out because it was in the else statement above
+         * reason being that nothing actually worked in that block of code during testing
+         * - josh t
+         * 
+         */
 
-            System.out.println(pivotCanEncoder.getPosition());
-        }
-        
+        SmartDashboard.putNumber("[INTAKE] Intake Current", getIntakeVoltage());
+        SmartDashboard.putNumber("[INTAKE] Right Pivot Velocity", pivotMotor.get());
+        SmartDashboard.putNumber("[INTAKE] Left Intake Velocity", pivotMotor.get());
+        SmartDashboard.putNumber("[INTAKE] Intake Position", pivotCanEncoder.getPosition()); // Change back to pivotMotor if something is wrong
+        SmartDashboard.putNumber("[INTAKE] PID Goal", getController().getGoal().position);
+
+        System.out.println(pivotCanEncoder.getPosition());
     }
     
     
@@ -141,13 +151,13 @@ public class IntakeSubsystem extends ProfiledPIDSubsystem {
     public void Brake(){ intakeMotor.setIdleMode(IdleMode.kBrake); }
     public void Coast(){ intakeMotor.setIdleMode(IdleMode.kCoast); }
 
-    public double getIntakeVoltage(){ return pivotMotor.getOutputCurrent() * pivotMotor.getBusVoltage(); }
+    public double getIntakeVoltage(){ return pivotMotor.getOutputCurrent() * pivotMotor.getBusVoltage();}
 
     public double getIntakeSpeed(){ return pivotCanEncoder.getVelocity() * Constants.shooterWheelGearRatio; }
 
-    public double GetEncoderPosition(){ return pivotCanEncoder.getPosition(); }
+    public double getEncoderPosition(){ return pivotCanEncoder.getPosition(); }
 
-    public double GetEncoderRawVelocity(){ return pivotCanEncoder.getVelocity(); }
+    public double getEncoderRawVelocity(){ return pivotCanEncoder.getVelocity(); }
 
     // Profiled PID derived methods
     protected void useOutput(double output, TrapezoidProfile.State setpoint){
