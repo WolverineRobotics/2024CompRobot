@@ -48,12 +48,6 @@ public class LimelightAlignCommand extends Command{
         if(turn < -limit){turn = -limit;}
         if(turn > limit){turn = limit;}
 
-        SmartDashboard.putNumber("[LIMELIGHT] Turn", turn);
-        SmartDashboard.putNumber("[LIMELIGHT] TX", getLimelightX());
-        SmartDashboard.putNumber("[LIMELIGHT] TY", getLimelightY());
-        SmartDashboard.putNumber("[LIMELIGHT] TA", getLimelightA());
-        SmartDashboard.putBoolean("[LIMELIGHT] TV", getLimelightV());
-
         if(auto)
         {
             if (m_AprilTaginSight)
@@ -61,11 +55,18 @@ public class LimelightAlignCommand extends Command{
                 if (distance >= 2){throttle = -limit;}
                 else if(distance < 1.5){throttle = limit;}
                 else{throttle = 0;}
-                m_Drive.autoDrive(-throttle, turn);
+                m_Drive.AutoDrive(-throttle, turn);
             } 
-            else {m_Drive.driveRotate(0);}
+
+            else {m_Drive.Rotate(0);}
             end();
         }
+
+        SmartDashboard.putNumber("[LIMELIGHT] Turn", turn);
+        SmartDashboard.putNumber("[LIMELIGHT] TX", getLimelightX());
+        SmartDashboard.putNumber("[LIMELIGHT] TY", getLimelightY());
+        SmartDashboard.putNumber("[LIMELIGHT] TA", getLimelightA());
+        SmartDashboard.putBoolean("[LIMELIGHT] TV", getLimelightV());
     }
 
     /* GET LIMELIGHT VALUES */

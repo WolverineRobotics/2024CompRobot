@@ -6,9 +6,9 @@ package frc.robot;
 
 public final class Constants {
   
-  public static final int LEFT_MOTOR_1 = 5; // Left Side (Behind the Battery (bumpers!!!!))
+  public static final int LEFT_MOTOR_1 = 5; 
   public static final int LEFT_MOTOR_2 = 6;
-  public static final int RIGHT_MOTOR_1 = 8; // Right Side (Behind the Battery (bumpers!!!!))
+  public static final int RIGHT_MOTOR_1 = 8; 
   public static final int RIGHT_MOTOR_2 = 7;
   
   public static final int kShooterLimitSwitchChannel = 0;

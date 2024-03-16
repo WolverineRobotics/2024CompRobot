@@ -24,7 +24,7 @@ public class IntakeSubsystem extends ProfiledPIDSubsystem {
     public static CANSparkMax pivotMotor, intakeMotor;
     public static RelativeEncoder pivotCanEncoder; // ,rightCanEncoder; (this variable is null)
     public static double pivot_KP = 0.05;
-    private final DigitalInput intakeLimitSwitch = new DigitalInput(0);
+    private final DigitalInput intakeLimitSwitch = new DigitalInput(2);
     
     private boolean intaking;
     
@@ -57,7 +57,7 @@ public class IntakeSubsystem extends ProfiledPIDSubsystem {
         getController().setTolerance(2);
         
         // Initializing Idle Modes for Motors
-        pivotMotor.setIdleMode(IdleMode.kBrake);
+        pivotMotor.setIdleMode(IdleMode.kCoast);
         intakeMotor.setIdleMode(IdleMode.kBrake);
         
         intaking = false;
@@ -83,20 +83,34 @@ public class IntakeSubsystem extends ProfiledPIDSubsystem {
         if(!Robot.has_gamepiece){ 
             if(Input.fireInTheHole() > 0){
 
-                if(intakeLimitSwitch.get()){ 
+                if(!intakeLimitSwitch.get()){ 
                     setIntakeSpeed(0);
+
                 } else {
                      setIntakeSpeed(Input.fireInTheHole());
                 }
 
             }
             else if(Input.AmpScore()){
-                setIntakeSpeed(-0.9);
+                setIntakeSpeed(-1);
             }
 
             else{
                 setIntakeSpeed(0);
             }
+
+            pivotMotor.set(Input.Operator().getRightY() * 0.3);
+
+            // Check if intake going into robot
+            if (pivotCanEncoder.getPosition() > -3 && Input.Operator().getRightY() > 0){
+                pivotMotor.set(0);
+            }
+
+            // Check if intake going into floor
+            if (pivotCanEncoder.getPosition() < -39 && Input.Operator().getRightY() < 0) { //encoder value not determined
+                pivotMotor.set(0);
+            } 
+
             // if(Input.fireInTheHole() > 0 && !intaking){
             //     RobotContainer.instance.StartIntaking();
             //     intaking = true;
@@ -120,23 +134,12 @@ public class IntakeSubsystem extends ProfiledPIDSubsystem {
         //         setIntakeSpeed(0);
         //     }
         // }
-
-        /*
-         * SmartDashboard Logging
-         * 
-         * who wants to take a bet that the SD values don't print out because it was in the else statement above
-         * reason being that nothing actually worked in that block of code during testing
-         * - josh t
-         * 
-         */
-
         SmartDashboard.putNumber("[INTAKE] Intake Current", getIntakeVoltage());
         SmartDashboard.putNumber("[INTAKE] Right Pivot Velocity", pivotMotor.get());
         SmartDashboard.putNumber("[INTAKE] Left Intake Velocity", pivotMotor.get());
         SmartDashboard.putNumber("[INTAKE] Intake Position", pivotCanEncoder.getPosition()); // Change back to pivotMotor if something is wrong
         SmartDashboard.putNumber("[INTAKE] PID Goal", getController().getGoal().position);
-
-        System.out.println(pivotCanEncoder.getPosition());
+        SmartDashboard.putBoolean("[INTAKE] Limit Switch", intakeLimitSwitch.get());
     }
     
     

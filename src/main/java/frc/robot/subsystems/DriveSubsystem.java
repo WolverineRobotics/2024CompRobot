@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.DriverStation;
 
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.*;
@@ -40,26 +41,28 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 public class DriveSubsystem extends ProfiledPIDSubsystem {
 
   public static DifferentialDrive driveTrain;
-  private static DifferentialDriveKinematics m_Kinematics;
-  public static DifferentialDriveOdometry m_Odometry;
+  private static DifferentialDriveKinematics mKinematics;
+  public static DifferentialDriveOdometry mOdometry;
   // public static DifferentialDrivePoseEstimator --- maybe use later
-  private Pigeon2 m_Gyro;
+  private Pigeon2 mGyro;
   private RelativeEncoder leftEncoder, rightEncoder;
+  //private SparkAbsoluteEncoder leftEncoder1, rightEncoder1;
+  //private final Encoder _l = 
+  private Pose2d startPose, mPose;
 
-  private Pose2d startPose, m_Pose;
-
-  private CANSparkMax leftMaster, leftFollower, rightMaster, rightFollower;
+  private CANSparkMax leftMaster;//= new CANSparkMax(Constants.LEFT_MOTOR_1, MotorType.kBrushless);
+  private CANSparkMax rightMaster;// = new CANSparkMax(Constants.RIGHT_MOTOR_1, MotorType.kBrushless);
 
   private double trackWidth = 25;
   private double wheelRadius = 3;
   private double wheelRadiusMeters = Units.inchesToMeters(wheelRadius);
   private double encoderPositionAverage;
 
-  private final PIDController leftPid = new PIDController(0.1, 0.03, 0.05);
-  private final PIDController rightPid = new PIDController(0.1, 0.03, 0.05);
+  private final PIDController left_pid = new PIDController(0.1, 0.03, 0.05);
+  private final PIDController right_pid = new PIDController(0.1, 0.03, 0.05);
   private final RamseteController m_RamseteController = new RamseteController();
 
-  private SlewRateLimiter slewRate;
+  private SlewRateLimiter slew;
 
 
   public DriveSubsystem() {
@@ -74,10 +77,10 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
 
     /* Setup base drivetrain */ 
     leftMaster = new CANSparkMax(Constants.LEFT_MOTOR_1, MotorType.kBrushless);
-    leftFollower = new CANSparkMax(Constants.LEFT_MOTOR_2, MotorType.kBrushless);
+    CANSparkMax leftFollower = new CANSparkMax(Constants.LEFT_MOTOR_2, MotorType.kBrushless);
 
     rightMaster = new CANSparkMax(Constants.RIGHT_MOTOR_1, MotorType.kBrushless);
-    rightFollower = new CANSparkMax(Constants.RIGHT_MOTOR_2, MotorType.kBrushless);
+    CANSparkMax rightFollower = new CANSparkMax(Constants.RIGHT_MOTOR_2, MotorType.kBrushless);
     
     leftFollower.follow(leftMaster);
     rightFollower.follow(rightMaster);
@@ -93,42 +96,38 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
     
     driveTrain = new DifferentialDrive(leftMaster, rightMaster);
     driveTrain.setSafetyEnabled(false);
-
     // slew = new SlewRateLimiter(0.5, 0.5, 0);
     
     /* ------------------------- Setup odometry objects ------------------------- */
     /* ----------------- ENSURE EVERYTHING ODOMETRY IS IN METRES ---------------- */
     
+    
     // Kinematics
-    m_Kinematics = new DifferentialDriveKinematics(Units.inchesToMeters(trackWidth));
+    mKinematics = new DifferentialDriveKinematics(Units.inchesToMeters(trackWidth));
     
     // need device id
-    m_Gyro = new Pigeon2(Constants.PIGEON_ID);
-    m_Gyro.reset();
+    mGyro = new Pigeon2(Constants.PIGEON_ID);
+    mGyro.reset();
     
     leftEncoder = leftMaster.getEncoder();
     rightEncoder = rightMaster.getEncoder();
     
     // rightEncoder.setInverted(true);
     
-    leftEncoder.setPosition(0);
-    rightEncoder.setPosition(0);
-
-    float leftCountsPerRev = leftEncoder.getCountsPerRevolution();
-    float rightCountsPerRev = rightEncoder.getCountsPerRevolution();
-    
     leftEncoder.setPositionConversionFactor(Constants.kDriverEncoderDistanceConversionFactor);
     rightEncoder.setPositionConversionFactor(Constants.kDriverEncoderDistanceConversionFactor);
     
-    double translateX = 0;
-    double translateY = 0;
+    double x = 0;
+    double y = 0;
+    // double x = SmartDashboard.getNumber("starting_x", 0);
+    // double y = SmartDashboard.getNumber("starting_y", 0);
     
     startPose = new Pose2d(
-      new Translation2d(translateX, translateY),
-      m_Gyro.getRotation2d()
+      new Translation2d(x, y),
+      mGyro.getRotation2d()
     );
      
-    m_Odometry = new DifferentialDriveOdometry(m_Gyro.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition(), startPose);
+    mOdometry = new DifferentialDriveOdometry(mGyro.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition(), startPose);
 
     }
 
@@ -137,7 +136,7 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
       SmartDashboard.putNumber("[DRIVE] Output", output);
       SmartDashboard.putNumber("[DRIVE] Setpoint", setpoint.position);
       if(!getController().atGoal()) {
-        autoDrive(0, output);
+        AutoDrive(0, output);
       }
     }
 
@@ -149,18 +148,28 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
 
   // Tele-Op Driving 
   public void ArcadeDrive(){
-    driveTrain.arcadeDrive(Input.getHorizontal() * 0.f, Input.getVertical());
+    // driveTrain.arcadeDrive(Input.getHorizontal() * 0.3f, slew.calculate(Input.getVertical()) * 0.3f);
+    driveTrain.arcadeDrive(Input.getHorizontal() * 0.8f, Input.getVertical());
   }
 
-  public Pose2d GetPose(){ return m_Odometry.getPoseMeters(); }
-  public Pigeon2 GetPigeon(){ return m_Gyro; } 
-  public double GetHeading(){ return m_Pose.getRotation().getDegrees();}
+  public Pose2d GetPose(){ return mOdometry.getPoseMeters(); }
+  public Pigeon2 GetPigeon(){ return mGyro; } 
+  public double GetHeading(){ return mPose.getRotation().getDegrees();}
 
-  public void autoDrive(double speed,double rotation){
-      // driveTrain.arcadeDrive(rotation, speed);
+  // if (DriverStation.getAlliance() == DriverStation.Alliance.Red){
+  //   new DifferentialDrivePoseEstimator(
+  //     m_kinematics, 
+  //     m_gyro.getRotation2d(),
+  //     leftEncoder.getDistance(), 
+  //     rightEncoder.getDistance() 
+  //     m_pose);
+  // }
+
+  public void AutoDrive(double speed,double rotation){
+      driveTrain.arcadeDrive(rotation, speed);
     }
 
-  public void driveRotate(double rotation){
+  public void Rotate(double rotation){
     // driveTrain.arcadeDrive(rotation, 0);
   }
   
@@ -171,7 +180,6 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
       );
   }
   
-  // TODO: Robot Characterization for Windsor?
   public void SetDriveVoltages(double l_volts, double r_volts){
     rightMaster.setVoltage(r_volts);
     leftMaster.setVoltage(l_volts);
@@ -179,19 +187,32 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
   }
   
   public void ResetGyro(){
-    m_Gyro.reset();
+    mGyro.reset();
   }
   
   public double GetTurnRate(){
-    return m_Gyro.getRate();
+    return mGyro.getRate();
   }
+  
     
   @Override
   public void periodic() {
-    m_Pose = m_Odometry.update(m_Gyro.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition());
+    // This method will be called once per scheduler run
+    mPose = mOdometry.update(mGyro.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition());
+    
+    SmartDashboard.putNumber("[DRIVE] Left Distance ", leftEncoder.getPosition());
+    SmartDashboard.putNumber("[DRIVE] Right Distance ", rightEncoder.getPosition());
 
-    // SmartDashboard.putNumber("[DRIVE] Left Encoder", leftEncoder.getPosition());
-    // SmartDashboard.putNumber("[DRIVE] Right Encoder", rightEncoder.getPosition());
-    // SmartDashboard.putNumber("[DRIVE] Gyroscope Yaw", m_gyro.getYaw().getValueAsDouble());
+    SmartDashboard.putNumber("[DRIVE] Left Counts per Revolution", leftEncoder.getCountsPerRevolution());
+    SmartDashboard.putNumber("[DRIVE] Right Counts per Revolution", rightEncoder.getCountsPerRevolution());
+
   }
+  
+  /* Came with the template */
+  public Command exampleMethodCommand() {
+    return runOnce(
+      () -> {
+        /* one-time action goes here */
+      });
+    }
 }
