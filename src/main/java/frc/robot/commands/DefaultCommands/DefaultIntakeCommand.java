@@ -53,12 +53,9 @@ public class DefaultIntakeCommand extends Command{
                 m_intake.pivotMotor.set(0);
             } 
 
-
-
-
+            // INTAKE COMMAND
             if(Input.Operator().getAButton()){
-                CommandScheduler.getInstance().add(new AutoIntakeCommand(m_intake));
-
+                CommandScheduler.getInstance().schedule(new AutoIntakeCommand(m_intake));
             }
         }
     }
