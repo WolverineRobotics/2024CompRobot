@@ -21,10 +21,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class IntakeSubsystem extends ProfiledPIDSubsystem {
 
-    public static CANSparkMax pivotMotor, intakeMotor;
-    public static RelativeEncoder pivotCanEncoder; // ,rightCanEncoder; (this variable is null)
+    public final CANSparkMax pivotMotor, intakeMotor;
+    public final RelativeEncoder pivotCanEncoder; // ,rightCanEncoder; (this variable is null)
     public static double pivot_KP = 0.05;
-    private final DigitalInput intakeLimitSwitch = new DigitalInput(2);
+    public final DigitalInput intakeLimitSwitch = new DigitalInput(2);
     
     private boolean intaking;
     
@@ -79,7 +79,7 @@ public class IntakeSubsystem extends ProfiledPIDSubsystem {
         // else if(!noteLimitSwitch.get()){
         //     Robot.has_gamepiece = false;
         // }
-
+            /*
         if(!Robot.has_gamepiece){ 
             if(Input.fireInTheHole() > 0){
 
@@ -109,7 +109,7 @@ public class IntakeSubsystem extends ProfiledPIDSubsystem {
             // Check if intake going into floor
             if (pivotCanEncoder.getPosition() < -39 && Input.Operator().getRightY() < 0) { //encoder value not determined
                 pivotMotor.set(0);
-            } 
+            }*/
 
             // if(Input.fireInTheHole() > 0 && !intaking){
             //     RobotContainer.instance.StartIntaking();
@@ -120,7 +120,7 @@ public class IntakeSubsystem extends ProfiledPIDSubsystem {
             //     RobotContainer.instance.PostPosessionRoutine();
             //     intaking = false;
             // }
-        }
+        
 
         // else{
         //     if(intaking){

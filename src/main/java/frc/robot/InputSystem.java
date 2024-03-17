@@ -46,7 +46,7 @@ public class InputSystem {
     public static double ManualShooterPivot(){ return oController.getLeftY(); } 
     public static double ClimberController(){ return ((oController.getLeftTriggerAxis() * 1) + (oController.getRightTriggerAxis() * -1)); } 
 
-    // Manual Climb
+    // Auto Controls For Operator
     public static boolean AutoIntake() {return oController.getLeftBumper();}
     public static boolean Shoot() {return oController.getRightBumper();}
 

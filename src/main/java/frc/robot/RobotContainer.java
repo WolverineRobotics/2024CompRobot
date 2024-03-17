@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.DefaultCommands.DefaultDriveCommand;
+import frc.robot.commands.DefaultCommands.DefaultIntakeCommand;
 import frc.robot.commands.DefaultCommands.DefaultShootingCommand;
 import frc.robot.commands.Drive.DecelerateDriveCommand;
 import frc.robot.commands.Drive.ForwardDrive;
@@ -16,6 +17,7 @@ import frc.robot.commands.Handoffs.FoldBackCommand;
 import frc.robot.commands.Handoffs.FoldOutCommand;
 import frc.robot.commands.Handoffs.StandardHandoffCommand;
 import frc.robot.commands.Limelight.LimelightAlignCommand;
+import frc.robot.subsystems.ClimbSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
@@ -47,7 +49,9 @@ public class RobotContainer {
 
   /* Intake */
   private IntakeSubsystem m_Intake = new IntakeSubsystem();
-  // private IntakeSubsystem m_intakecommand = new IntakeSubsystem();
+  private DefaultIntakeCommand m_IntakeCommand = new DefaultIntakeCommand(m_Intake);
+
+  private ClimbSubsystem mClimbSubsystem = new ClimbSubsystem();
   
   /* Controllers */ 
   public static CommandXboxController m_DriverController =
@@ -70,6 +74,7 @@ public class RobotContainer {
     // m_shootingcommand = new DefaultShootingCommand(m_shooter);
     
     CommandScheduler.getInstance().setDefaultCommand(m_Drive, m_Drivecommand);
+    CommandScheduler.getInstance().setDefaultCommand(m_Intake, m_IntakeCommand);
     CommandScheduler.getInstance().setDefaultCommand(m_Limelight, m_LimelightAlignCommand);
     // CommandScheduler.getInstance().setDefaultCommand(m_shooter, m_shootingcommand);
 
@@ -77,18 +82,22 @@ public class RobotContainer {
     // configureBindings();
   }
 
-  private void configureBindings() {
-    m_DriverController.leftBumper().whileTrue(new DecelerateDriveCommand(m_Drive));
-    m_DriverController.rightBumper().whileTrue(new LimelightAlignCommand(m_Limelight));
-  }
-
   public DriveSubsystem VroomVroom(){
     return m_Drive;
   }
 
-  /*public NoahDriveSubsystem drive(){
-    return m_Noah;
-  }*/
+  public IntakeSubsystem getIntakeSubsystem(){
+    return m_Intake;
+  }
+
+  public ClimbSubsystem getClimbSubsystem(){
+    return m_c
+  }
+
+  private void configureBindings() {
+    m_DriverController.leftBumper().whileTrue(new DecelerateDriveCommand(m_Drive));
+    m_DriverController.rightBumper().whileTrue(new LimelightAlignCommand(m_Limelight));
+  }
   
   public void PostPosessionRoutine(){
     // CommandScheduler.getInstance().schedule(new StartingPositionsCommand(m_intake));
@@ -108,16 +117,10 @@ public class RobotContainer {
     CommandScheduler.getInstance().schedule(
       new FoldBackCommand(m_Intake)
     );
-
-    // CommandScheduler.getInstance().schedule(
-    //   new StandardHandoffCommand(m_intake).andThen(
-    //     new PosessGamepieceCommand(m_intake) ) );
   }
   
   public Command getAutonomousCommand() {
     return null;
-    // An example command will be run in autonomous
-    // return Autos.exampleAuto(m_drive);
   }
   
 }
