@@ -51,7 +51,7 @@ public class RobotContainer {
   private IntakeSubsystem m_Intake = new IntakeSubsystem();
   private DefaultIntakeCommand m_IntakeCommand = new DefaultIntakeCommand(m_Intake);
 
-  private ClimbSubsystem mClimbSubsystem = new ClimbSubsystem();
+  private ClimbSubsystem m_ClimbSubsystem = new ClimbSubsystem();
   
   /* Controllers */ 
   public static CommandXboxController m_DriverController =
@@ -91,7 +91,7 @@ public class RobotContainer {
   }
 
   public ClimbSubsystem getClimbSubsystem(){
-    return m_c
+    return m_ClimbSubsystem;
   }
 
   private void configureBindings() {

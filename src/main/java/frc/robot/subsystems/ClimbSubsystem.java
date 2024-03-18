@@ -10,8 +10,8 @@ import frc.robot.Input;
 
 public class ClimbSubsystem extends SubsystemBase  {
 
-    private CANSparkMax leftClimb;
-    private CANSparkMax rightClimb;
+    public final CANSparkMax leftClimb;
+    public final CANSparkMax rightClimb;
 
     private int left_timer = 0;
     private int right_timer = 0;
