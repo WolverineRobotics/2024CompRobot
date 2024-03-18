@@ -1,15 +1,21 @@
-package frc.robot.commands.Handoffs;
+package frc.robot.commands.AutoPositionsCommands;
+
+import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Input;
 import frc.robot.Robot;
-import frc.robot.commands.AutoPositionsCommands.AutoIntakeCommand;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.Constants;
 
 public class FlipIntakeCommand extends Command {
+
     private final IntakeSubsystem m_Intake;
+
     private double intakeSetpoint;
+    private double intakeError;
+    private double errorTolerance = 1;
 
     public FlipIntakeCommand(IntakeSubsystem intakeSubsystem, double intakeAngle){
         m_Intake = intakeSubsystem;
@@ -17,24 +23,23 @@ public class FlipIntakeCommand extends Command {
         addRequirements(intakeSubsystem);
     }
 
-    // Called when the command is initially scheduled.
     @Override
     public void initialize() {}
 
-    // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        double kP_Intake = 1;
-        double intakeError = (intakeSetpoint - m_Intake.pivotCanEncoder.getPosition());
 
-        if(intakeError > 0){
-            m_Intake.pivotMotor.set(0);
+        double kP_Intake = 0.05;
+        double currentPos = m_Intake.pivotCanEncoder.getPosition();
+        double intakeError = (intakeSetpoint - currentPos);
 
+        m_Intake.pivotMotor.set(intakeError * kP_Intake);
+
+        if (intakeError > 0){
+            m_Intake.pivotMotor.set(-intakeError*kP_Intake);
         } else if (intakeError < 0) {
             m_Intake.pivotMotor.set(intakeError * kP_Intake);
-
         }
-
     }
 
     // Called once the command ends or is interrupted.
@@ -44,6 +49,10 @@ public class FlipIntakeCommand extends Command {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return false;
+        if(Math.abs(intakeError) <= errorTolerance){
+            return true;
+        } else {
+            return false;
+        }
     }
 }

@@ -4,7 +4,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Input;
 import frc.robot.Robot;
+import frc.robot.Constants;
 import frc.robot.commands.AutoPositionsCommands.AutoIntakeCommand;
+import frc.robot.commands.AutoPositionsCommands.FlipIntakeCommand;
 import frc.robot.subsystems.IntakeSubsystem;
 
 public class DefaultIntakeCommand extends Command{
@@ -22,41 +24,49 @@ public class DefaultIntakeCommand extends Command{
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        if(!Robot.has_gamepiece){ 
-            if(Input.fireInTheHole() > 0){
+        
+        // 
+        if(Input.fireInTheHole() > 0){
 
-                if(!m_intake.intakeLimitSwitch.get()){ 
-                    m_intake.setIntakeSpeed(0);
-
-                } else {
-                    m_intake.setIntakeSpeed(1);
-                }
-
-            }
-            else if(Input.AmpScore()){
-                m_intake.setIntakeSpeed(-1);
-            }
-
-            else{
+            if(!m_intake.intakeLimitSwitch.get()){ 
                 m_intake.setIntakeSpeed(0);
+
+            } else {
+                m_intake.setIntakeSpeed(1);
             }
 
-            m_intake.pivotMotor.set(Input.Operator().getRightY() * 0.3);
+        }
 
-            // Check if intake going into robot
-            if (m_intake.pivotCanEncoder.getPosition() > -3 && Input.Operator().getRightY() > 0){
-                m_intake.pivotMotor.set(0);
-            }
+        // Shooting out of intake
+        else if(Input.AmpScore()){
+            m_intake.setIntakeSpeed(-1);
+        }
 
-            // Check if intake going into floor
-            if (m_intake.pivotCanEncoder.getPosition() < -39 && Input.Operator().getRightY() < 0) { 
-                m_intake.pivotMotor.set(0);
-            } 
+        else{
+            m_intake.setIntakeSpeed(0);
+        }
+        
+        // Manual intake pivot control
+        m_intake.pivotMotor.set(Input.Operator().getRightY() * 0.3);
 
-            // AUTO INTAKE COMMAND
-            if(Input.Operator().getAButton()){
-                CommandScheduler.getInstance().schedule(new AutoIntakeCommand(m_intake));
-            }
+        // Check if intake going into robot
+        if (m_intake.pivotCanEncoder.getPosition() > -3 && Input.Operator().getRightY() > 0){
+            m_intake.pivotMotor.set(0);
+        }
+
+        // Check if intake going into floor
+        if (m_intake.pivotCanEncoder.getPosition() < -39 && Input.Operator().getRightY() < 0) { 
+            m_intake.pivotMotor.set(0);
+        } 
+
+        // AUTO INTAKE COMMAND
+        if(Input.Operator().getAButton()){
+            CommandScheduler.getInstance().schedule(new AutoIntakeCommand(m_intake));
+        }
+        
+        // AUTO FLIP OUT
+        if(Input.Operator().getXButton()){
+            CommandScheduler.getInstance().schedule(new FlipIntakeCommand(m_intake, Constants.Positional.kIntakeIntakingPosition));
         }
     }
 

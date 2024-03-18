@@ -136,14 +136,7 @@ public class LimelightAlignCommand extends Command{
     }
 
     public boolean isFinished(){
-        // if(LimelightHelpers.getTA("") == Constants.OperatorConstants.TAG_TO_ROBOT){
-        //     return true;
-        // } else {
-        //     return false;
-        // }
-        
         // This will try to check if the tag is within a desired error range of at least 2.5%
-        // I HIGHLY DOUBT it will be exactly where the constant states
         if(Math.abs(Constants.OperatorConstants.TAG_TO_ROBOT - LimelightHelpers.getTA("")) < 2.5){
             return true;
         } else {

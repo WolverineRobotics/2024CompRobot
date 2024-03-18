@@ -87,7 +87,7 @@ public final class Constants {
     
     // For Intaking from source(shooter) or ground (intake)
     public static final int kShooterIntakingPosition = 10;
-    public static final int kIntakeIntakingPosition = 45;
+    public static final int kIntakeIntakingPosition = -55;
 
     // For regular feeding to shooter 
     public static final int kShooterNonConflictPosition = 90;

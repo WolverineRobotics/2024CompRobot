@@ -24,7 +24,7 @@ public class Input {
     }
 
     /* SHOOTER CONTROLS */
-    public static double fireInTheHole(){
+    public static double fireInTheHole(){ // This is to shoot... not intake || TODO: Get this to be shoot instead
         return (opController.getRightTriggerAxis());
     }
 
@@ -32,11 +32,11 @@ public class Input {
         return (opController.getLeftBumper());
     }
 
-    public static double rockOnTheGround(){
+    public static double rockOnTheGround(){ // Pivot Control :sob:
         return (opController.getRightY() * 0.3);
     }
 
-    public static boolean waterOnTheHill(){
+    public static boolean waterOnTheHill(){  // This is to intake... not shoot || TODO: Get this to be intake instead
         return (opController.getRightBumper());
     }
 
