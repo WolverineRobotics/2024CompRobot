@@ -23,6 +23,14 @@ public class Input {
         return driveController.getRightBumper();
     }
 
+    public static double lowerLeftClimb(){
+        return driveController.getLeftTriggerAxis();
+    }
+
+    public static double lowerRightClimb(){
+        return driveController.getRightTriggerAxis();
+    }
+
     /* SHOOTER CONTROLS */
     public static double fireInTheHole(){ // This is to shoot... not intake || TODO: Get this to be shoot instead
         return (opController.getRightTriggerAxis());

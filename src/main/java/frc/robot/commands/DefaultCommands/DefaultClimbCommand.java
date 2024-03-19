@@ -14,14 +14,13 @@ public class DefaultClimbCommand extends Command{
 
     @Override
     public void execute() {
-        if (Input.driveController.getLeftTriggerAxis() > 0.1){mClimb.leftClimb.set(0.3);}
-        else if(Input.driveController.getLeftBumper()){mClimb.leftClimb.set(-0.3); }
+        if (Input.driveController.getLeftTriggerAxis() > 0.5) {mClimb.leftClimb.set(-0.3);}
+        else if(Input.driveController.getLeftBumper()){mClimb.leftClimb.set(0.3); }
         else{mClimb.leftClimb.set(0); }
         
-        if (Input.driveController.getRightTriggerAxis() > 0.1){mClimb.rightClimb.set(-0.3); }
+        if (Input.driveController.getRightTriggerAxis() > 0.5) {mClimb.rightClimb.set(-0.3);}
         else if(Input.driveController.getRightBumper()){mClimb.rightClimb.set(0.3); }
         else{mClimb.rightClimb.set(0); }
-
     }
     
 }

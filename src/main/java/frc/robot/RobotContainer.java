@@ -5,6 +5,7 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.DefaultCommands.DefaultClimbCommand;
 import frc.robot.commands.DefaultCommands.DefaultDriveCommand;
 import frc.robot.commands.DefaultCommands.DefaultIntakeCommand;
 import frc.robot.commands.DefaultCommands.DefaultShootingCommand;
@@ -21,7 +22,6 @@ import frc.robot.subsystems.ClimbSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
-import frc.robot.subsystems.NoahDriveSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -52,13 +52,7 @@ public class RobotContainer {
   private DefaultIntakeCommand m_IntakeCommand = new DefaultIntakeCommand(m_Intake);
 
   private ClimbSubsystem m_ClimbSubsystem = new ClimbSubsystem();
-  
-  /* Controllers */ 
-  public static CommandXboxController m_DriverController =
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
-
-  public static CommandXboxController m_OperatorController =
-      new CommandXboxController(OperatorConstants.kOperatorControllerPort);
+  private DefaultClimbCommand m_ClimbCommand = new DefaultClimbCommand(m_ClimbSubsystem);
 
   public static RobotContainer instance;
 
@@ -76,6 +70,7 @@ public class RobotContainer {
     CommandScheduler.getInstance().setDefaultCommand(m_Drive, m_Drivecommand);
     CommandScheduler.getInstance().setDefaultCommand(m_Intake, m_IntakeCommand);
     CommandScheduler.getInstance().setDefaultCommand(m_Limelight, m_LimelightAlignCommand);
+    CommandScheduler.getInstance().setDefaultCommand(m_ClimbSubsystem, m_ClimbCommand);
     // CommandScheduler.getInstance().setDefaultCommand(m_shooter, m_shootingcommand);
 
     instance = this;
@@ -95,8 +90,8 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    m_DriverController.leftBumper().whileTrue(new DecelerateDriveCommand(m_Drive));
-    m_DriverController.rightBumper().whileTrue(new LimelightAlignCommand(m_Limelight));
+    // m_DriverController.leftBumper().whileTrue(new DecelerateDriveCommand(m_Drive));
+    // m_DriverController.rightBumper().whileTrue(new LimelightAlignCommand(m_Limelight));
   }
   
   public void PostPosessionRoutine(){
