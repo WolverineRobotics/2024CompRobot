@@ -22,8 +22,6 @@ public class ClimbSubsystem extends SubsystemBase  {
 
         leftClimb.setIdleMode(IdleMode.kBrake);
         rightClimb.setIdleMode(IdleMode.kBrake);
-
-        leftClimb.setInverted(true);
     }
 
     @Override
