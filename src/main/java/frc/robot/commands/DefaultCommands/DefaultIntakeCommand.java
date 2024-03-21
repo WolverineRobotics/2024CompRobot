@@ -29,7 +29,7 @@ public class DefaultIntakeCommand extends Command{
         // if(Input.fireInTheHole() > 0 ){
 
         //     /* While false, and if the note is caught, delay the signal for at least 0.15 seconds before being actually true. */
-        //     /* I actually don't know if the logic actually works out or if debouncing works this way, but I'll leave it here for now */
+        //     /* I actually don't know if debouncing works this way nor am I sure if a timed solution is the best, but I'll leave it for now. */
 
         //     if(!m_intake.intakeLimitSwitch.get()){ 
         //         if(m_intake.limitSwitchDebouncer.calculate(m_intake.intakeLimitSwitch.get())){
