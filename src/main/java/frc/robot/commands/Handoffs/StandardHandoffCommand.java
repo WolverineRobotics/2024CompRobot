@@ -28,15 +28,15 @@ public class StandardHandoffCommand extends Command{
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        if(shooter.getController().atGoal() && stage == 1){
-            intake.setGoal(Constants.Positional.kIntakeDefaultFeedPosition); 
-            intake.enable();
-            stage = 2;
-        }
-        else if (intake.getController().atGoal() && stage == 2){
-            shooter.setGoal(Constants.Positional.kShooterDefaultFeedPosition);
-            stage = 3;
-        }
+        // if(shooter.getController().atGoal() && stage == 1){
+        //     //intake.setGoal(Constants.Positional.kIntakeDefaultFeedPosition); 
+        //     intake.enable();
+        //     stage = 2;
+        // }
+        // else if (intake.getController().atGoal() && stage == 2){
+        //     shooter.setGoal(Constants.Positional.kShooterDefaultFeedPosition);
+        //     stage = 3;
+        // }
     }
 
     // Called once the command ends or is interrupted.

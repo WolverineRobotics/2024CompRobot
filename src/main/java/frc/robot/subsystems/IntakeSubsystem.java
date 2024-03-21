@@ -12,20 +12,25 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.PIDSubsystem;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class IntakeSubsystem extends ProfiledPIDSubsystem {
+public class IntakeSubsystem extends PIDSubsystem {
 
     public final CANSparkMax pivotMotor, intakeMotor;
     public final RelativeEncoder pivotCanEncoder; // ,rightCanEncoder; (this variable is null)
-    public static double pivot_KP = 0.05;
+    public static double pivot_KP = 0.1;
+    public static double pivot_KI = 0;
+    public static double pivot_KD = 0;
     public final DigitalInput intakeLimitSwitch = new DigitalInput(2);
     
+
     private boolean intaking;
     
     // private final DigitalInput noteLimitSwitch= new DigitalInput(Constants.kShooterLimitSwitchChannel);
@@ -33,12 +38,7 @@ public class IntakeSubsystem extends ProfiledPIDSubsystem {
 
     public IntakeSubsystem(){
 
-        super(
-            new ProfiledPIDController(pivot_KP, 0, 0.0,
-            new TrapezoidProfile.Constraints(
-                OperatorConstants.kMaxIntakePivotVelocity,
-                OperatorConstants.kMaxIntakePivotAcceleration)), 
-            0);
+        super(new PIDController(pivot_KP, pivot_KI, pivot_KD));
 
         // Initializing motors
         intakeMotor = new CANSparkMax(Constants.OperatorConstants.kIntakeMotor, MotorType.kBrushless);
@@ -72,14 +72,21 @@ public class IntakeSubsystem extends ProfiledPIDSubsystem {
         SmartDashboard.putNumber("[INTAKE] Right Pivot Velocity", pivotMotor.get());
         SmartDashboard.putNumber("[INTAKE] Left Intake Velocity", pivotMotor.get());
         SmartDashboard.putNumber("[INTAKE] Intake Position", pivotCanEncoder.getPosition()); // Change back to pivotMotor if something is wrong
-        SmartDashboard.putNumber("[INTAKE] PID Goal", getController().getGoal().position);
+        SmartDashboard.putNumber("[INTAKE] PID Goal", getController().getSetpoint());
         SmartDashboard.putBoolean("[INTAKE] Limit Switch", intakeLimitSwitch.get());
+        
+        // useOutput(0, getController().getSetpoint());
+        
     }
     
     
     public void setIntakeVoltage(double voltage){
         pivotMotor.setVoltage(voltage);
         intakeMotor.setVoltage(voltage);
+    }
+    
+    public boolean atSetpoint(){
+        return getController().atSetpoint();
     }
     
     public void setIntakeSpeed(double speed){ intakeMotor.set(speed); }
@@ -96,16 +103,25 @@ public class IntakeSubsystem extends ProfiledPIDSubsystem {
 
     public double getEncoderRawVelocity(){ return pivotCanEncoder.getVelocity(); }
 
-    // Profiled PID derived methods
-    protected void useOutput(double output, TrapezoidProfile.State setpoint){
-        SmartDashboard.putNumber("[INTAKE PID] Pivot Output", output);
-        SmartDashboard.putNumber("[INTAKE PID] Pivot Setpoint", setpoint.position);
 
-        if(!getController().atSetpoint()){ pivotMotor.set(output); }
-        else{ pivotMotor.set(0); }
+
+    // Profiled PID derived methods
+    @Override
+    protected void useOutput(double output, double setpoint){
+        SmartDashboard.putNumber("[INTAKE PID] Pivot Output", output);
+        SmartDashboard.putNumber("[INTAKE PID] Pivot Setpoint", setpoint);
+
+       pivotMotor.set(output + m_controller.calculate(setpoint));
     };
     
     protected double getMeasurement(){
         return pivotCanEncoder.getPosition();
     };
+
+    public void setIntakeSetpoint(double setPoint){
+        getController().setSetpoint(setPoint);
+        enable();
+    }
+
+    
 }

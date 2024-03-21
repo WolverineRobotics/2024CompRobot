@@ -16,7 +16,7 @@ public class FoldBackCommand extends Command{
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        intake.setGoal(Constants.Positional.kIntakeDefaultFeedPosition); 
+        //intake.setGoal(Constants.Positional.kIntakeDefaultFeedPosition); 
         intake.enable();
     }
     

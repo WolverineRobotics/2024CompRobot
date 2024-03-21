@@ -16,7 +16,7 @@ public class FoldOutCommand extends Command{
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        intake.setGoal(Constants.Positional.kIntakeIntakingPosition); 
+        //intake.setGoal(Constants.Positional.kIntakeIntakingPosition); 
         intake.enable();
     }
     

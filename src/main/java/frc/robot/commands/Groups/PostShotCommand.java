@@ -22,7 +22,7 @@ public class PostShotCommand extends Command{
     @Override
     public void initialize() {
         // shooter.setGoal(Constants.Positional.kIntakeSubwooferHandoffPosition); 
-        intake.setGoal(Constants.Positional.kShooterMinPosition); 
+        //intake.setGoal(Constants.Positional.kShooterMinPosition); 
 
         // shooter.enable();
         intake.enable();

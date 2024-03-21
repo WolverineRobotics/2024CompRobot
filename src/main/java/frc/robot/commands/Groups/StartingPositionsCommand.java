@@ -22,7 +22,7 @@ public class StartingPositionsCommand extends Command{
     @Override
     public void initialize() {
         // shooter.setGoal(Constants.Positional.kShooterSubwooferShotPosition); 
-        intake.setGoal(Constants.Positional.kIntakeSubwooferHandoffPosition); 
+        //intake.setGoal(Constants.Positional.kIntakeSubwooferHandoffPosition); 
 
         // shooter.enable();
         intake.enable();
