@@ -13,6 +13,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -22,9 +23,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class IntakeSubsystem extends ProfiledPIDSubsystem {
 
     public final CANSparkMax pivotMotor, intakeMotor;
-    public final RelativeEncoder pivotCanEncoder; // ,rightCanEncoder; (this variable is null)
-    public static double pivot_KP = 0.05;
+    public final RelativeEncoder pivotCanEncoder;
+    public static double pivot_KP = 0.1;
+    public static double pivot_KD = 0.05;
+    public static double pivot_KI = 0;
+
     public final DigitalInput intakeLimitSwitch = new DigitalInput(2);
+    public final Debouncer limitSwitchDebouncer =  new Debouncer(0.15, Debouncer.DebounceType.kBoth);
     
     private boolean intaking;
     
@@ -34,7 +39,7 @@ public class IntakeSubsystem extends ProfiledPIDSubsystem {
     public IntakeSubsystem(){
 
         super(
-            new ProfiledPIDController(pivot_KP, 0, 0.0,
+            new ProfiledPIDController(pivot_KP, 0, pivot_KD,
             new TrapezoidProfile.Constraints(
                 OperatorConstants.kMaxIntakePivotVelocity,
                 OperatorConstants.kMaxIntakePivotAcceleration)), 
@@ -58,7 +63,9 @@ public class IntakeSubsystem extends ProfiledPIDSubsystem {
         
         // Initializing Idle Modes for Motors
         pivotMotor.setIdleMode(IdleMode.kCoast);
-        intakeMotor.setIdleMode(IdleMode.kBrake);
+        intakeMotor.setIdleMode(IdleMode.kCoast);
+
+        // pivotMotor.setInverted(true);
         
         intaking = false;
     }
@@ -66,7 +73,20 @@ public class IntakeSubsystem extends ProfiledPIDSubsystem {
     
     @Override
     public void periodic(){
-        // super.periodic();
+        super.periodic();
+
+        if(Input.opController.getYButton()){
+            setGoal(-10);
+            enable();
+        }
+        if(Input.opController.getXButton()){
+            setGoal(-35);
+            enable();
+        }
+
+        if(Input.opController.getStartButton()){
+            disable();
+        }
         
         SmartDashboard.putNumber("[INTAKE] Intake Current", getIntakeVoltage());
         SmartDashboard.putNumber("[INTAKE] Right Pivot Velocity", pivotMotor.get());
@@ -77,10 +97,10 @@ public class IntakeSubsystem extends ProfiledPIDSubsystem {
     }
     
     
-    public void setIntakeVoltage(double voltage){
-        pivotMotor.setVoltage(voltage);
-        intakeMotor.setVoltage(voltage);
-    }
+    // public void setIntakeVoltage(double voltage){
+    //     pivotMotor.setVoltage(voltage);
+    //     intakeMotor.setVoltage(voltage);
+    // }
     
     public void setIntakeSpeed(double speed){ intakeMotor.set(speed); }
     
@@ -101,7 +121,7 @@ public class IntakeSubsystem extends ProfiledPIDSubsystem {
         SmartDashboard.putNumber("[INTAKE PID] Pivot Output", output);
         SmartDashboard.putNumber("[INTAKE PID] Pivot Setpoint", setpoint.position);
 
-        if(!getController().atSetpoint()){ pivotMotor.set(output); }
+        if(!getController().atGoal()){ pivotMotor.set(output); }
         else{ pivotMotor.set(0); }
     };
     
