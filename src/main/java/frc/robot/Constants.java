@@ -21,7 +21,7 @@ public final class Constants {
 
   public static final double kLeftDriverEncoderDistanceConversionFactor = (24/49.66) * Units.inchesToMeters(24);
   public static final double kRightDriverEncoderDistanceConversionFactor= (24/57) * Units.inchesToMeters(24);
-  public static DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(27);
+  public static DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(Units.inchesToMeters(26));
 
   public static final int PIGEON_ID = 1;
 

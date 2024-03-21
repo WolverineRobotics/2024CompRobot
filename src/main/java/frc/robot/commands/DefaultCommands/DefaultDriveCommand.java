@@ -4,6 +4,7 @@
 
 package frc.robot.commands.DefaultCommands;
 
+import frc.robot.Input;
 import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -22,7 +23,10 @@ public class DefaultDriveCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_Drive.ArcadeDrive();
+    // m_Drive.ArcadeDrive();
+
+    m_Drive.SetDriveVoltages(
+      Input.Driver().getLeftY() * 10, Input.Driver().getRightY() *10);
   }
 
   // Called once the command ends or is interrupted.

@@ -53,21 +53,24 @@ public class RobotContainer {
 
   /* Noah */
   //private NoahDriveSubsystem m_Noah = new NoahDriveSubsystem();
-
+  
   /* Limelight */
   private LimelightSubsystem m_Limelight = new LimelightSubsystem();
   private Command m_LimelightAlignCommand = new LimelightAlignCommand(m_Limelight);
-
+  
   /* Shooter */
   // private ShooterSubsystem m_shooter = new ShooterSubsystem();
   // private Command m_shootingcommand = new DefaultShootingCommand(m_shooter);
-
+  
   /* Intake */
   private IntakeSubsystem m_Intake = new IntakeSubsystem();
   private DefaultIntakeCommand m_IntakeCommand = new DefaultIntakeCommand(m_Intake);
-
+  
   private ClimbSubsystem m_ClimbSubsystem = new ClimbSubsystem();
   private DefaultClimbCommand m_ClimbCommand = new DefaultClimbCommand(m_ClimbSubsystem);
+  
+  private PIDController left_pid = new PIDController(0.01, 0, 0);
+  private PIDController right_pid = new PIDController(0.01, 0, 0);
 
   public static RobotContainer instance;
 
@@ -75,7 +78,7 @@ public class RobotContainer {
     new SimpleMotorFeedforward(0.25, 1);
 
   private final DifferentialDriveVoltageConstraint autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
-    trajFeedforward, Constants.kDriveKinematics, 6);
+    trajFeedforward, Constants.kDriveKinematics, 4);
     
   private final TrajectoryConfig trajConfig = new TrajectoryConfig(2, 2)
     .setKinematics(Constants.kDriveKinematics)
@@ -86,7 +89,7 @@ public class RobotContainer {
   private Trajectory test = 
     TrajectoryGenerator.generateTrajectory(
       new Pose2d(0, 0, new Rotation2d(0)),
-       List.of( new Translation2d(0, 0.5) ) , new Pose2d(0, 1,
+       List.of( new Translation2d(0.5, 0) ) , new Pose2d(1, 0,
         new Rotation2d(0)),
          trajConfig);
 
@@ -97,8 +100,8 @@ public class RobotContainer {
     trajFeedforward,
     Constants.kDriveKinematics, 
     m_Drive::GetWheelSpeeds,
-    new PIDController(0.05, 0, 0),
-    new PIDController(0.05, 0, 0),
+    left_pid,
+    right_pid,
     m_Drive::SetDriveVoltages,
     m_Drive );
 
@@ -123,6 +126,10 @@ public class RobotContainer {
 
     instance = this;
     // configureBindings();
+
+    SmartDashboard.putNumber("left_error", left_pid.getPositionError());
+    SmartDashboard.putNumber("right_error", right_pid.getPositionError());
+
   }
 
   public DriveSubsystem VroomVroom(){

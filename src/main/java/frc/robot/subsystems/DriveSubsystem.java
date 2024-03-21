@@ -58,57 +58,11 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
   private double wheelRadiusMeters = Units.inchesToMeters(wheelRadius);
   private double encoderPositionAverage;
 
-  private final PIDController left_pid = new PIDController(0.1, 0.03, 0.05);
-  private final PIDController right_pid = new PIDController(0.1, 0.03, 0.05);
-  private final RamseteController m_RamseteController = new RamseteController();
+  // private final PIDController left_pid = new PIDController(0.1, 0.03, 0.05);
+  // private final PIDController right_pid = new PIDController(0.1, 0.03, 0.05);
+  // private final RamseteController m_RamseteController = new RamseteController();
 
   private SlewRateLimiter slew;
-
-    // Mutable holder for unit-safe voltage values, persisted to avoid reallocation.
-  // private final MutableMeasure<Voltage> m_appliedVoltage = MutableMeasure.mutable(edu.wpi.first.units.Units.Volts.of(0));
-  // // Mutable holder for unit-safe linear distance values, persisted to avoid reallocation.
-  // private final MutableMeasure<Distance> m_distance = MutableMeasure.mutable(edu.wpi.first.units.Units.Meters.of(0));
-  // // Mutable holder for unit-safe linear velocity values, persisted to avoid reallocation.
-  // private final MutableMeasure<Velocity<Distance>> m_velocity = MutableMeasure.mutable(edu.wpi.first.units.Units.MetersPerSecond.of(0));
-
-
-  
-  // // Create a new SysId routine for characterizing the drive.
-  // private final SysIdRoutine m_sysIdRoutine =
-  //     new SysIdRoutine(
-  //         // Empty config defaults to 1 volt/second ramp rate and 7 volt step voltage.
-  //         new SysIdRoutine.Config(),
-  //         new SysIdRoutine.Mechanism(
-  //             // Tell SysId how to plumb the driving voltage to the motors.
-  //             (Measure<Voltage> volts) -> {
-  //               leftMaster.setVoltage(volts.in(edu.wpi.first.units.Units.Volts));
-  //               rightMaster.setVoltage(volts.in(edu.wpi.first.units.Units.Volts));
-  //             },
-  //             // Tell SysId how to record a frame of data for each motor on the mechanism being
-  //             // characterized.
-  //             log -> {
-  //               // Record a frame for the left motors.  Since these share an encoder, we consider
-  //               // the entire group to be one motor.
-  //               log.motor("drive-left")
-  //                   .voltage(
-  //                       m_appliedVoltage.mut_replace(
-  //                           leftMaster.get() * RobotController.getBatteryVoltage(), edu.wpi.first.units.Units.Volts))
-  //                   .linearPosition(m_distance.mut_replace(leftEncoder.getPosition(), edu.wpi.first.units.Units.Meters))
-  //                   .linearVelocity(
-  //                       m_velocity.mut_replace(leftEncoder.getVelocity(), edu.wpi.first.units.Units.MetersPerSecond));
-  //               // Record a frame for the right motors.  Since these share an encoder, we consider
-  //               // the entire group to be one motor.
-  //               log.motor("drive-right")
-  //                   .voltage(
-  //                       m_appliedVoltage.mut_replace(
-  //                           rightMaster.get() * RobotController.getBatteryVoltage(), edu.wpi.first.units.Units.Volts))
-  //                   .linearPosition(m_distance.mut_replace(rightEncoder.getPosition(), edu.wpi.first.units.Units.Meters))
-  //                   .linearVelocity(
-  //                       m_velocity.mut_replace(rightEncoder.getVelocity(), edu.wpi.first.units.Units.MetersPerSecond));
-  //             },
-  //             // Tell SysId to make generated commands require this subsystem, suffix test state in
-  //             // WPILog with this subsystem's name ("drive")
-  //             this));
 
   public DriveSubsystem() {
     // Rotate In Place Gains & Goals - Separate PID Controller For DriveForward
@@ -171,6 +125,9 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
     double y = 0;
     // double x = SmartDashboard.getNumber("starting_x", 0);
     // double y = SmartDashboard.getNumber("starting_y", 0);
+
+    SmartDashboard.putNumber("left_RATE", leftEncoder.getVelocity());
+    SmartDashboard.putNumber("right_RATE", rightEncoder.getVelocity());
     
     startPose = new Pose2d(
       new Translation2d(x, y),
