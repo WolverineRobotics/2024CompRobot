@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -23,7 +24,7 @@ private Command m_autonomousCommand;
   @Override
   public void robotInit() {
     m_robotContainer = new RobotContainer();
-    CameraServer.startAutomaticCapture();
+    // CameraServer.startAutomaticCapture();
     
     // Set to false if there is not in fact a gamepiece on starting config.
     has_gamepiece = false;
@@ -35,6 +36,8 @@ private Command m_autonomousCommand;
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+
+    DataLogManager.start();
   }
   
   /** This function is called once each time the robot enters Disabled mode. */

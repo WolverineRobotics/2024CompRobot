@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.Measure;
+
 public final class Constants {
   
   public static final int LEFT_MOTOR_1 = 5; 
@@ -15,7 +18,8 @@ public final class Constants {
   public static final int kSPosessionLimitSwitchChannel = 1;
   public static final int kIntakePosessionLimitSwitchChannel = 1;
 
-  public static final int kDriverEncoderDistanceConversionFactor= 7;
+  public static final double kLeftDriverEncoderDistanceConversionFactor = (24/49.66) * Units.inchesToMeters(24);
+  public static final double kRightDriverEncoderDistanceConversionFactor= (24/57) * Units.inchesToMeters(24);
 
   public static final int PIGEON_ID = 1;
 

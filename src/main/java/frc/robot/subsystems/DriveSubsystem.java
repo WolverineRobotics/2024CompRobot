@@ -3,40 +3,40 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.subsystems;
-import frc.robot.Constants;
-import frc.robot.Input;
-import frc.robot.RobotContainer;
-import frc.robot.Constants.OperatorConstants;
+import com.ctre.phoenix6.hardware.Pigeon2;
+import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.RamseteController;
-import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
-import edu.wpi.first.math.estimator.PoseEstimator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.Distance;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.MutableMeasure;
 import edu.wpi.first.units.Unit;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.drive.*;
+import edu.wpi.first.units.Velocity;
+import edu.wpi.first.units.Voltage;
+import edu.wpi.first.util.datalog.DataLog;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.DriverStation;
-
-import com.ctre.phoenix.motorcontrol.*;
-import com.ctre.phoenix.motorcontrol.can.*;
-import com.ctre.phoenix6.hardware.Pigeon2;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkAbsoluteEncoder;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants;
+import frc.robot.Constants.OperatorConstants;
+import frc.robot.Input;
 
 public class DriveSubsystem extends ProfiledPIDSubsystem {
 
@@ -64,12 +64,60 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
 
   private SlewRateLimiter slew;
 
+    // Mutable holder for unit-safe voltage values, persisted to avoid reallocation.
+  // private final MutableMeasure<Voltage> m_appliedVoltage = MutableMeasure.mutable(edu.wpi.first.units.Units.Volts.of(0));
+  // // Mutable holder for unit-safe linear distance values, persisted to avoid reallocation.
+  // private final MutableMeasure<Distance> m_distance = MutableMeasure.mutable(edu.wpi.first.units.Units.Meters.of(0));
+  // // Mutable holder for unit-safe linear velocity values, persisted to avoid reallocation.
+  // private final MutableMeasure<Velocity<Distance>> m_velocity = MutableMeasure.mutable(edu.wpi.first.units.Units.MetersPerSecond.of(0));
+
+
+  
+  // // Create a new SysId routine for characterizing the drive.
+  // private final SysIdRoutine m_sysIdRoutine =
+  //     new SysIdRoutine(
+  //         // Empty config defaults to 1 volt/second ramp rate and 7 volt step voltage.
+  //         new SysIdRoutine.Config(),
+  //         new SysIdRoutine.Mechanism(
+  //             // Tell SysId how to plumb the driving voltage to the motors.
+  //             (Measure<Voltage> volts) -> {
+  //               leftMaster.setVoltage(volts.in(edu.wpi.first.units.Units.Volts));
+  //               rightMaster.setVoltage(volts.in(edu.wpi.first.units.Units.Volts));
+  //             },
+  //             // Tell SysId how to record a frame of data for each motor on the mechanism being
+  //             // characterized.
+  //             log -> {
+  //               // Record a frame for the left motors.  Since these share an encoder, we consider
+  //               // the entire group to be one motor.
+  //               log.motor("drive-left")
+  //                   .voltage(
+  //                       m_appliedVoltage.mut_replace(
+  //                           leftMaster.get() * RobotController.getBatteryVoltage(), edu.wpi.first.units.Units.Volts))
+  //                   .linearPosition(m_distance.mut_replace(leftEncoder.getPosition(), edu.wpi.first.units.Units.Meters))
+  //                   .linearVelocity(
+  //                       m_velocity.mut_replace(leftEncoder.getVelocity(), edu.wpi.first.units.Units.MetersPerSecond));
+  //               // Record a frame for the right motors.  Since these share an encoder, we consider
+  //               // the entire group to be one motor.
+  //               log.motor("drive-right")
+  //                   .voltage(
+  //                       m_appliedVoltage.mut_replace(
+  //                           rightMaster.get() * RobotController.getBatteryVoltage(), edu.wpi.first.units.Units.Volts))
+  //                   .linearPosition(m_distance.mut_replace(rightEncoder.getPosition(), edu.wpi.first.units.Units.Meters))
+  //                   .linearVelocity(
+  //                       m_velocity.mut_replace(rightEncoder.getVelocity(), edu.wpi.first.units.Units.MetersPerSecond));
+  //             },
+  //             // Tell SysId to make generated commands require this subsystem, suffix test state in
+  //             // WPILog with this subsystem's name ("drive")
+  //             this));
+
   public DriveSubsystem() {
     // Rotate In Place Gains & Goals - Separate PID Controller For DriveForward
     super(
       new ProfiledPIDController(Constants.kp, Constants.ki, Constants.kd, 
       new TrapezoidProfile.Constraints(OperatorConstants.kMaxDriveVelocity, OperatorConstants.kMaxDriveAcceleration)), 0
     );
+
+    
  
     // Set Tolerance For Rotating 
     getController().setTolerance(15);
@@ -85,7 +133,7 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
     rightFollower.follow(rightMaster);
     
     rightMaster.setInverted(true);
-    leftMaster.setInverted(true);
+    leftMaster.setInverted(false);
     
     leftMaster.setIdleMode(IdleMode.kBrake);
     rightMaster.setIdleMode(IdleMode.kBrake);
@@ -94,12 +142,12 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
     rightFollower.setIdleMode(IdleMode.kBrake);
     
     driveTrain = new DifferentialDrive(leftMaster, rightMaster);
+    driveTrain.setDeadband(0.1);
     driveTrain.setSafetyEnabled(false);
     // slew = new SlewRateLimiter(0.5, 0.5, 0);
     
     /* ------------------------- Setup odometry objects ------------------------- */
     /* ----------------- ENSURE EVERYTHING ODOMETRY IS IN METRES ---------------- */
-    
     
     // Kinematics
     mKinematics = new DifferentialDriveKinematics(Units.inchesToMeters(trackWidth));
@@ -110,11 +158,14 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
     
     leftEncoder = leftMaster.getEncoder();
     rightEncoder = rightMaster.getEncoder();
+
+    leftEncoder.setPosition(0);
+    rightEncoder.setPosition(0);
     
     // rightEncoder.setInverted(true);
     
-    leftEncoder.setPositionConversionFactor(Constants.kDriverEncoderDistanceConversionFactor);
-    rightEncoder.setPositionConversionFactor(Constants.kDriverEncoderDistanceConversionFactor);
+    leftEncoder.setPositionConversionFactor((0.127) * Units.inchesToMeters(24));
+    rightEncoder.setPositionConversionFactor((0.127) * Units.inchesToMeters(24));
     
     double x = 0;
     double y = 0;
@@ -126,9 +177,8 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
       mGyro.getRotation2d()
     );
      
-    mOdometry = new DifferentialDriveOdometry(mGyro.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition(), startPose);
-
-    }
+    mOdometry = new DifferentialDriveOdometry(mGyro.getRotation2d(), leftEncoder.getPosition(), -rightEncoder.getPosition(), startPose);
+  }
 
     // Profiled PID Commands
     protected void useOutput(double output, TrapezoidProfile.State setpoint) {
@@ -147,8 +197,7 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
 
   // Tele-Op Driving 
   public void ArcadeDrive(){
-    // driveTrain.arcadeDrive(Input.getHorizontal() * 0.3f, slew.calculate(Input.getVertical()) * 0.3f);
-    driveTrain.arcadeDrive(Input.getHorizontal() * 0.8f, Input.getVertical());
+    driveTrain.arcadeDrive(Input.getVertical(), Input.getHorizontal() * 0.8f);
   }
 
   public Pose2d GetPose(){ return mOdometry.getPoseMeters(); }
@@ -169,7 +218,7 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
     }
 
   public void Rotate(double rotation){
-    // driveTrain.arcadeDrive(rotation, 0);
+    driveTrain.arcadeDrive(rotation, 0);
   }
   
   public DifferentialDriveWheelSpeeds GetWheelSpeeds() {
@@ -197,16 +246,48 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    mPose = mOdometry.update(mGyro.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition());
+    mPose = mOdometry.update(mGyro.getRotation2d(), leftEncoder.getPosition(), -rightEncoder.getPosition());
     
     SmartDashboard.putNumber("[DRIVE] Left Distance ", leftEncoder.getPosition());
-    SmartDashboard.putNumber("[DRIVE] Right Distance ", rightEncoder.getPosition());
+    SmartDashboard.putNumber("[DRIVE] Right Distance ", -rightEncoder.getPosition());
+
+    // SmartDashboard.putNumber("[DRIVE] Left Ticks ", leftEncoder.());
+    // SmartDashboard.putNumber("[DRIVE] Right Ticks ", -rightEncoder.());
 
     SmartDashboard.putNumber("[DRIVE] Left Counts per Revolution", leftEncoder.getCountsPerRevolution());
     SmartDashboard.putNumber("[DRIVE] Right Counts per Revolution", rightEncoder.getCountsPerRevolution());
+    
+    SmartDashboard.putNumber("[ODOMETRY] x", mOdometry.getPoseMeters().getX());
+    SmartDashboard.putNumber("[ODOMETRY] y", mOdometry.getPoseMeters().getY());
+    SmartDashboard.putNumber("[ODOMETRY] rotation", mGyro.getAngle());
 
+    if(Input.driveController.getXButton()){
+      leftEncoder.setPosition(0);
+      rightEncoder.setPosition(0);
+    }
+
+    // if(Input.driveController.getYButtonPressed()){
+    //   sysIdQuasistatic(SysIdRoutine.Direction.kForward).schedule();
+    // }
+
+    // if(Input.driveController.getYButtonReleased()){
+    //   getCurrentCommand().cancel();
+    // }
   }
-  
+
+  // public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+  //   return m_sysIdRoutine.quasistatic(direction);
+  // }
+
+  // /**
+  //  * Returns a command that will execute a dynamic test in the given direction.
+  //  *
+  //  * @param direction The direction (forward or reverse) to run the test in
+  //  */
+  // public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+  //   return m_sysIdRoutine.dynamic(direction);
+  // }
+
   /* Came with the template */
   public Command exampleMethodCommand() {
     return runOnce(

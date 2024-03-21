@@ -1,0 +1,11 @@
+24in robot traveled
+
+50 ticks for left encoder
+58 ticks for right encoder
+
+49 ticks for left encoder
+56 ticks for right encoder
+
+50 ticks for left encoder
+57 ticks for right encoder
+

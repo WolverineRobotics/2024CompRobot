@@ -24,6 +24,8 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.constraint.TrajectoryConstraint;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -56,6 +58,9 @@ public class RobotContainer {
 
   public static RobotContainer instance;
 
+  private final TrajectoryConfig trajConfig = new TrajectoryConfig(2, 2);
+  // private final TrajectoryConstraint trajConstraint = 
+
   // private static final SequentialCommandGroup postPosessionCommandGroup;
   // private static final SequentialCommandGroup acquiredGamepieceCommandGroup = new SequentialCommandGroup(
   //   new );
@@ -87,6 +92,10 @@ public class RobotContainer {
 
   public ClimbSubsystem getClimbSubsystem(){
     return m_ClimbSubsystem;
+  }
+
+  public LimelightSubsystem getLimelightSubsystem(){
+    return m_Limelight;
   }
 
   private void configureBindings() {
