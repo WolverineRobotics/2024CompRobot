@@ -54,7 +54,7 @@ public class IntakeSubsystem extends ProfiledPIDSubsystem {
         pivotCanEncoder.setVelocityConversionFactor(1);
 
         // setGoal(10);
-        getController().setTolerance(2);
+        getController().setTolerance(4);
         
         // Initializing Idle Modes for Motors
         pivotMotor.setIdleMode(IdleMode.kCoast);
