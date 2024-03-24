@@ -2,14 +2,21 @@ package frc.robot.commands.Drive;
 
 import frc.robot.Constants;
 import frc.robot.subsystems.DriveSubsystem;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class RotateDriveCommand extends Command{
-    private final DriveSubsystem rotate; 
+    private final DriveSubsystem m_drive; 
 
-    public RotateDriveCommand(DriveSubsystem subsystem) {
-        rotate = subsystem;
-        addRequirements(subsystem);
+
+    private PIDController pid = new PIDController(0.03, 0, 0);
+
+    public RotateDriveCommand(DriveSubsystem drive, int targetRotation) {
+        m_drive = drive;
+
+        pid.setSetpoint(targetRotation);
+
+        addRequirements(drive);
     }
 
     // Called when the command is initially scheduled.
@@ -20,35 +27,23 @@ public class RotateDriveCommand extends Command{
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
-    public void execute() {
-        // // Check For Possible Inputs
-        // if (InputSystem.FaceForward()) {
-        //     rotate.getController().setGoal(Constants.Positional.kFaceForward);
-        // }
-
-        // if (InputSystem.FaceLeft()) {
-        //     rotate.getController().setGoal(Constants.Positional.kFaceLeft);
-        // }
-
-        // if (InputSystem.FaceRight()) {
-        //     rotate.getController().setGoal(Constants.Positional.kFaceRight);
-        // }
-
-        // if (InputSystem.FaceDriver()) {
-        //     rotate.getController().setGoal(Constants.Positional.kFaceDriver);
-        // }
+    public void execute() { 
+        m_drive.AutoDrive(
+            0,
+            pid.calculate(m_drive.GetHeading())
+            );
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-
+        m_drive.AutoDrive(0, 0);
     }
 
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        // return rotate.getController().atGoal();
-        return false;
+
+        return pid.atSetpoint();
     }
 }
