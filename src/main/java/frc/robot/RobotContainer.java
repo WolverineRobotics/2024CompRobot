@@ -5,6 +5,8 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.AutoPositionsCommands.AmpShootCommand;
+import frc.robot.commands.AutoPositionsCommands.AutoIntakeCommand;
 import frc.robot.commands.DefaultCommands.DefaultClimbCommand;
 import frc.robot.commands.DefaultCommands.DefaultDriveCommand;
 import frc.robot.commands.DefaultCommands.DefaultIntakeCommand;
@@ -55,6 +57,14 @@ public class RobotContainer {
   private DefaultClimbCommand m_ClimbCommand = new DefaultClimbCommand(m_ClimbSubsystem);
 
   public static RobotContainer instance;
+
+  private SequentialCommandGroup ampAutoOneNote = new SequentialCommandGroup(
+    new ForwardDrive(m_Drive, 1),
+    new RotateDriveCommand(m_Drive, 90),
+    new ForwardDrive(m_Drive, 0.75),
+    new AmpShootCommand(m_Intake, 500)
+  );
+      
 
   // private static final SequentialCommandGroup postPosessionCommandGroup;
   // private static final SequentialCommandGroup acquiredGamepieceCommandGroup = new SequentialCommandGroup(

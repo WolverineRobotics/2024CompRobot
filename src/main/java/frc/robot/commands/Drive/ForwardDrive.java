@@ -12,7 +12,7 @@ public class ForwardDrive extends Command {
   private final DriveSubsystem fDrive;
   Timer timer = new Timer();
 
-  public ForwardDrive(DriveSubsystem driveSubsystem) {
+  public ForwardDrive(DriveSubsystem driveSubsystem, double Distance) {
     fDrive = driveSubsystem;
     addRequirements(driveSubsystem);
   }

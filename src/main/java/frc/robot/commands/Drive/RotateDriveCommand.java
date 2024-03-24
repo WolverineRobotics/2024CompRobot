@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class RotateDriveCommand extends Command{
     private final DriveSubsystem rotate; 
 
-    public RotateDriveCommand(DriveSubsystem subsystem) {
+    public RotateDriveCommand(DriveSubsystem subsystem, int targetHeading) {
         rotate = subsystem;
         addRequirements(subsystem);
     }

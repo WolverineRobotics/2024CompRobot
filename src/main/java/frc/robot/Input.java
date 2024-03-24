@@ -56,4 +56,9 @@ public class Input {
     public static XboxController Operator(){
         return opController;
     }
+
+    public static boolean AutoShutdown() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'AutoShutdown'");
+    }
 }

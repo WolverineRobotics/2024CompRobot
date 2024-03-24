@@ -5,12 +5,14 @@ import frc.robot.Input;
 import frc.robot.Robot;
 import frc.robot.subsystems.IntakeSubsystem;
 
-public class AutoIntakeCommand extends Command{
+public class AmpShootCommand extends Command{
 
     private IntakeSubsystem mIntake;
+    private int milliseconds;
 
-    public AutoIntakeCommand(IntakeSubsystem intakeSubsystem){
+    public AmpShootCommand(IntakeSubsystem intakeSubsystem, int targetMs){
         mIntake = intakeSubsystem;
+        milliseconds = targetMs;
         addRequirements(intakeSubsystem);
     }
     // Called when the command is initially scheduled.
@@ -20,11 +22,8 @@ public class AutoIntakeCommand extends Command{
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        if (!mIntake.intakeLimitSwitch.get()) {
-            mIntake.intakeMotor.set(0);
-        } else {
-            mIntake.intakeMotor.set(0.90);
-        }
+        mIntake.intakeMotor.set(0.9);
+        milliseconds -= 20;
     }
 
     // Called once the command ends or is interrupted.
@@ -36,7 +35,7 @@ public class AutoIntakeCommand extends Command{
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return !mIntake.intakeLimitSwitch.get();
+        return milliseconds <= 0;
     }
 
 }

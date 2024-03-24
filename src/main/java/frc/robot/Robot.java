@@ -51,8 +51,8 @@ private Command m_autonomousCommand;
   @Override
   public void autonomousInit() {
 
-    CommandScheduler.getInstance().schedule(new ForwardDrive(m_robotContainer.VroomVroom()));
-    // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    // CommandScheduler.getInstance().schedule(new ForwardDrive(m_robotContainer.VroomVroom()));
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     
     // // schedule the autonomous command (example)
     // if (m_autonomousCommand != null) {
@@ -78,7 +78,7 @@ private Command m_autonomousCommand;
     }
     
     LimelightHelpers.setLEDMode_ForceOff("");
-    m_robotContainer.VroomVroom().GetPigeon().reset();
+    // m_robotContainer.VroomVroom().GetPigeon().reset();
     
   }
   
