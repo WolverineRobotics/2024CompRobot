@@ -56,10 +56,10 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
   private double trackWidth = 25;
   private double wheelRadius = 3;
   private double wheelRadiusMeters = Units.inchesToMeters(wheelRadius);
-  private double encoderPositionAverage;
 
-  private final PIDController left_pid = new PIDController(0.1, 0.03, 0.05);
-  private final PIDController right_pid = new PIDController(0.1, 0.03, 0.05);
+  // Drive Forward PID Controllers
+  private final PIDController forwardDrivePid = new PIDController(0.1, 0.03, 0.05);
+
   private final RamseteController m_RamseteController = new RamseteController();
 
   private SlewRateLimiter slew;
@@ -120,7 +120,7 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
     double y = 0;
     // double x = SmartDashboard.getNumber("starting_x", 0);
     // double y = SmartDashboard.getNumber("starting_y", 0);
-    
+
     startPose = new Pose2d(
       new Translation2d(x, y),
       mGyro.getRotation2d()
@@ -149,6 +149,19 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
   public void ArcadeDrive(){
     // driveTrain.arcadeDrive(Input.getHorizontal() * 0.3f, slew.calculate(Input.getVertical()) * 0.3f);
     driveTrain.arcadeDrive(Input.getHorizontal() * 0.8f, Input.getVertical());
+  }
+
+  // Get Encoder Values
+  public double GetEncoderAverage(){
+    return (leftEncoder.getPosition() + leftEncoder.getPosition()) / 2;
+  }
+
+  public double getLeftEncoderPosition() {
+    return leftEncoder.getPosition();
+  }
+
+  public double getRightEncoderPosition() {
+    return rightEncoder.getPosition();
   }
 
   public Pose2d GetPose(){ return mOdometry.getPoseMeters(); }
@@ -192,7 +205,6 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
   public double GetTurnRate(){
     return mGyro.getRate();
   }
-  
     
   @Override
   public void periodic() {
