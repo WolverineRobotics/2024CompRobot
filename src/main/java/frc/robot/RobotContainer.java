@@ -60,6 +60,16 @@ public class RobotContainer {
   // private static final SequentialCommandGroup acquiredGamepieceCommandGroup = new SequentialCommandGroup(
   //   new );
 
+  private final SequentialCommandGroup rotateTest = new SequentialCommandGroup(
+    new RotateDriveCommand(m_Drive, 90),
+    // new RotateDriveCommand(m_Drive, 179),
+    // new RotateDriveCommand(m_Drive, -179),
+    // new RotateDriveCommand(m_Drive, 25),
+    new RotateDriveCommand(m_Drive, -45),
+    new RotateDriveCommand(m_Drive, 135),
+    new RotateDriveCommand(m_Drive, 0)
+  );
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
@@ -115,7 +125,8 @@ public class RobotContainer {
   }
   
   public Command getAutonomousCommand() {
-    return null;
+    // return new RotateDriveCommand(m_Drive, 90);
+    return rotateTest;
   }
   
 }
