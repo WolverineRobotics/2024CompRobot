@@ -113,8 +113,8 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
     
     // rightEncoder.setInverted(true);
     
-    leftEncoder.setPositionConversionFactor(Constants.kDriverEncoderDistanceConversionFactor);
-    rightEncoder.setPositionConversionFactor(Constants.kDriverEncoderDistanceConversionFactor);
+    leftEncoder.setPositionConversionFactor(Constants.kLeftDriverEncoderDistanceConversionFactor);
+    rightEncoder.setPositionConversionFactor(Constants.kRightDriverEncoderDistanceConversionFactor);
     
     double x = 0;
     double y = 0;
