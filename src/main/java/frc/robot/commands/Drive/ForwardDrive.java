@@ -6,12 +6,18 @@ package frc.robot.commands.Drive;
 
 import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class ForwardDrive extends Command {
   private final DriveSubsystem fDrive;
-  private final PIDController pid = new PIDController(0.1, 0, 0);
+  
+  private final ProfiledPIDController pid = 
+    new ProfiledPIDController(0.01, 0, 0, 
+    new Constraints(250, 100));
+
   public double initLeftEncoder;
   public double initRightEncoder;
 
@@ -21,7 +27,7 @@ public class ForwardDrive extends Command {
 
   public ForwardDrive(DriveSubsystem driveSubsystem, double setpoint) {
     fDrive = driveSubsystem;
-    pid.setSetpoint(setpoint);
+    pid.setGoal(setpoint);
     addRequirements(driveSubsystem);
   }
 
@@ -30,6 +36,7 @@ public class ForwardDrive extends Command {
   public void initialize() {
     initLeftEncoder = fDrive.getLeftEncoderPosition();
     initRightEncoder = fDrive.getRightEncoderPosition();
+    pid.reset(pid.calculate(0));
     pid.setTolerance(0.25);
   }
 
@@ -39,10 +46,10 @@ public class ForwardDrive extends Command {
     // Calculate Difference Between Current & Previous Encoder Value
     currentLeftEncoderValue = fDrive.getLeftEncoderPosition() - initLeftEncoder;
     currentRightEncoderValue = fDrive.getRightEncoderPosition() - initRightEncoder;
-    newEncoderAverage = (currentLeftEncoderValue-currentRightEncoderValue)/2;
+    newEncoderAverage = (currentLeftEncoderValue+currentRightEncoderValue)/2;
   
     double driveSpeed = pid.calculate(newEncoderAverage);
-    fDrive.AutoDrive(driveSpeed,0);
+    fDrive.AutoDrive(0,driveSpeed);
   }
 
   // Called once the command ends or is interrupted.
@@ -54,6 +61,6 @@ public class ForwardDrive extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return pid.atSetpoint();
+    return pid.atGoal();
   }
 }
