@@ -52,13 +52,13 @@ private Command m_autonomousCommand;
   public void autonomousInit() {
 
     //CommandScheduler.getInstance().schedule(new ForwardDrive(m_robotContainer.VroomVroom()));
-    // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     
-    // // schedule the autonomous command (example)
-    // if (m_autonomousCommand != null) {
-    //   m_autonomousCommand.schedule();
+    // schedule the autonomous command (example)
+    if (m_autonomousCommand != null) {
+      m_autonomousCommand.schedule();
 
-    // }
+    }
 
     
     

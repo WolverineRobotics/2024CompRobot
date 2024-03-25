@@ -111,10 +111,11 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
     leftEncoder = leftMaster.getEncoder();
     rightEncoder = rightMaster.getEncoder();
     
-    // rightEncoder.setInverted(true);
+    rightMaster.setInverted(true);
+    leftMaster.setInverted(false);
     
-    leftEncoder.setPositionConversionFactor(Constants.kDriverEncoderDistanceConversionFactor);
-    rightEncoder.setPositionConversionFactor(Constants.kDriverEncoderDistanceConversionFactor);
+    leftEncoder.setPositionConversionFactor(Constants.kLeftDriverEncoderDistanceConversionFactor);
+    rightEncoder.setPositionConversionFactor(Constants.kRightDriverEncoderDistanceConversionFactor);
     
     double x = 0;
     double y = 0;
@@ -148,7 +149,7 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
   // Tele-Op Driving 
   public void ArcadeDrive(){
     // driveTrain.arcadeDrive(Input.getHorizontal() * 0.3f, slew.calculate(Input.getVertical()) * 0.3f);
-    driveTrain.arcadeDrive(Input.getHorizontal() * 0.8f, Input.getVertical());
+    driveTrain.arcadeDrive(Input.getVertical(), Input.getHorizontal() * 0.8f);
   }
 
   // Get Encoder Values
@@ -178,11 +179,11 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
   // }
 
   public void AutoDrive(double speed,double rotation){
-      driveTrain.arcadeDrive(rotation, speed);
+      driveTrain.arcadeDrive(speed, rotation);
     }
 
   public void Rotate(double rotation){
-    // driveTrain.arcadeDrive(rotation, 0);
+    // driveTrain.arcadeDrive(rotation, 0);+
   }
   
   public DifferentialDriveWheelSpeeds GetWheelSpeeds() {

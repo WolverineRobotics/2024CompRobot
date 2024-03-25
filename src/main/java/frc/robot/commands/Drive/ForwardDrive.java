@@ -9,14 +9,18 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class ForwardDrive extends Command {
   private final DriveSubsystem fDrive;
   
+  private final PIDController rotPid = 
+    new PIDController(0.03, 0, 0);
+
   private final ProfiledPIDController pid = 
-    new ProfiledPIDController(0.01, 0, 0, 
-    new Constraints(250, 100));
+    new ProfiledPIDController(0.3, 0, 0, 
+    new Constraints(3, 3));
 
   public double initLeftEncoder;
   public double initRightEncoder;
@@ -37,7 +41,9 @@ public class ForwardDrive extends Command {
     initLeftEncoder = fDrive.getLeftEncoderPosition();
     initRightEncoder = fDrive.getRightEncoderPosition();
     pid.reset(pid.calculate(0));
-    pid.setTolerance(0.25);
+    pid.setTolerance(0.1);
+    // rotPid.reset();
+    // rotPid.setSetpoint(fDrive.GetHeading());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -49,7 +55,9 @@ public class ForwardDrive extends Command {
     newEncoderAverage = (currentLeftEncoderValue+currentRightEncoderValue)/2;
   
     double driveSpeed = pid.calculate(newEncoderAverage);
-    fDrive.AutoDrive(0,driveSpeed);
+    fDrive.AutoDrive(driveSpeed, rotPid.calculate(fDrive.GetHeading()));
+    fDrive.AutoDrive(driveSpeed, 0);
+    SmartDashboard.putNumber("SPEED OF DRIVE", driveSpeed);
   }
 
   // Called once the command ends or is interrupted.
