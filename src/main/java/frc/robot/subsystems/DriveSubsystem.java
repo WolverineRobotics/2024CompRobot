@@ -209,6 +209,7 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
   
   public void ResetGyro(){
     mGyro.reset();
+    mGyro.setYaw(0);
   }
   
   public double GetTurnRate(){

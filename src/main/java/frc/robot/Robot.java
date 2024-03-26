@@ -58,6 +58,8 @@ private Command m_autonomousCommand;
     //   // isFoldedBack = true;
     //   m_robotContainer.getIntakeSubsystem().ResetPivotEncoder();
     // }
+
+    if(Input.opController.getAButtonPressed()) {m_robotContainer.getIntakeSubsystem().ResetPivotEncoder();}
   }
   
   /** This function is called once each time the robot enters Disabled mode. */
@@ -73,6 +75,7 @@ private Command m_autonomousCommand;
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    m_robotContainer.VroomVroom().ResetGyro();
 
     //CommandScheduler.getInstance().schedule(new ForwardDrive(m_robotContainer.VroomVroom()));
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
@@ -120,6 +123,10 @@ private Command m_autonomousCommand;
 
     if(Input.opController.getRightBumperReleased()){
       new FoldBackCommand(m_robotContainer.getIntakeSubsystem()).schedule();
+    }
+
+    if(Input.driveController.getAButtonPressed()){
+      m_robotContainer.VroomVroom().GetPigeon().setYaw(0);
     }
   }
   

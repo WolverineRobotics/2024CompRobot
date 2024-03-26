@@ -13,7 +13,7 @@ public class RotateDriveCommand extends Command{
     private final DriveSubsystem m_drive; 
     private int target;
 
-    private ProfiledPIDController pid = new ProfiledPIDController(0.02, 0.005, 0.0, new Constraints(350, 225));
+    private ProfiledPIDController pid = new ProfiledPIDController(0.03, 0.005, 0.0, new Constraints(350, 200));
     // private PIDController pid = new PIDController(0.015, 0, 0);
 
     public RotateDriveCommand(DriveSubsystem drive, int targetRotation) {

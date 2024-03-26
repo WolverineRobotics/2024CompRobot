@@ -17,8 +17,9 @@ public class ShootAmpCommand extends Command{
     }
     // Called when the command is initially scheduled.
     @Override
-    public void initialize() {}
-
+    public void initialize() {
+        System.out.println("AAAAAA SHOOTCOMMAND STARTED EEEEEEEEEEEE");
+    }
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {        
@@ -30,6 +31,7 @@ public class ShootAmpCommand extends Command{
     @Override
     public void end(boolean interrupted) {
         mIntake.intakeMotor.set(0);
+        System.out.println("AAAAAA SHOOTCOMMAND FINISHED EEEEEEEEEEEE");
     }
 
     // Returns true when the command should end.

@@ -60,14 +60,14 @@ public class DefaultIntakeCommand extends Command{
         } 
 
         // AUTO INTAKE COMMAND
-        if(Input.Operator().getAButton()){
-            CommandScheduler.getInstance().schedule(new AutoIntakeCommand(m_intake));
-        }
+        // if(Input.Operator().getAButton()){
+        //     CommandScheduler.getInstance().schedule(new AutoIntakeCommand(m_intake));
+        // }
         
         // AUTO FLIP OUT
-        if(Input.Operator().getXButton()){
-            CommandScheduler.getInstance().schedule(new FlipIntakeCommand(m_intake, Constants.Positional.kIntakeIntakingPosition));
-        }
+        // if(Input.Operator().getXButton()){
+        //     CommandScheduler.getInstance().schedule(new FlipIntakeCommand(m_intake, Constants.Positional.kIntakeIntakingPosition));
+        // }
     }
 
     // Called once the command ends or is interrupted.

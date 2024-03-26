@@ -62,9 +62,9 @@ public class RobotContainer {
   //   new );
 
   private final SequentialCommandGroup rotateTest = new SequentialCommandGroup(
-    new ForwardDrive(m_Drive, 3),
+    new ForwardDrive(m_Drive, 3.35),
     new RotateDriveCommand(m_Drive, -90),
-    new ForwardDrive(m_Drive, 1),
+    new ForwardDrive(m_Drive, 1.8),
     new ShootAmpCommand(m_Intake, 750)
     );
 
