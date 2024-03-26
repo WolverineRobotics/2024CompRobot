@@ -50,12 +50,12 @@ public class DefaultIntakeCommand extends Command{
         m_intake.pivotMotor.set(Input.Operator().getRightY() * 0.3);
 
         // Check if intake going into robot
-        if (m_intake.pivotCanEncoder.getPosition() > -3 && Input.Operator().getRightY() < 0){
+        if (m_intake.pivotCanEncoder.getPosition() > -3 && Input.Operator().getRightY() > 0){
             m_intake.pivotMotor.set(0);
         }
 
         // Check if intake going into floor
-        if (m_intake.pivotCanEncoder.getPosition() < -39 && Input.Operator().getRightY() > 0) { 
+        if (m_intake.pivotCanEncoder.getPosition() < -39 && Input.Operator().getRightY() < 0) { 
             m_intake.pivotMotor.set(0);
         } 
 

@@ -5,6 +5,7 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.AutoPositionsCommands.ShootAmpCommand;
 import frc.robot.commands.DefaultCommands.DefaultClimbCommand;
 import frc.robot.commands.DefaultCommands.DefaultDriveCommand;
 import frc.robot.commands.DefaultCommands.DefaultIntakeCommand;
@@ -59,6 +60,13 @@ public class RobotContainer {
   // private static final SequentialCommandGroup postPosessionCommandGroup;
   // private static final SequentialCommandGroup acquiredGamepieceCommandGroup = new SequentialCommandGroup(
   //   new );
+
+  private final SequentialCommandGroup rotateTest = new SequentialCommandGroup(
+    new ForwardDrive(m_Drive, 3),
+    new RotateDriveCommand(m_Drive, -90),
+    new ForwardDrive(m_Drive, 1),
+    new ShootAmpCommand(m_Intake, 750)
+    );
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -115,7 +123,7 @@ public class RobotContainer {
   }
   
   public Command getAutonomousCommand() {
-    return null;
+    return rotateTest;
   }
   
 }
