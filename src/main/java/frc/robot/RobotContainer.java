@@ -41,8 +41,8 @@ public class RobotContainer {
   //private NoahDriveSubsystem m_Noah = new NoahDriveSubsystem();
 
   /* Limelight */
-  private LimelightSubsystem m_Limelight = new LimelightSubsystem();
-  private Command m_LimelightAlignCommand = new LimelightAlignCommand(m_Limelight);
+  // private LimelightSubsystem m_Limelight = new LimelightSubsystem();
+  // private Command m_LimelightAlignCommand = new LimelightAlignCommand(m_Limelight, m_Drive);
 
   /* Shooter */
   // private ShooterSubsystem m_shooter = new ShooterSubsystem();
@@ -72,12 +72,12 @@ public class RobotContainer {
   public RobotContainer() {
 
     m_Drivecommand = new DefaultDriveCommand(m_Drive);
-    m_LimelightAlignCommand = new LimelightAlignCommand(m_Limelight);
+    // m_LimelightAlignCommand = new LimelightAlignCommand(m_Limelight, m_Drive);
     // m_shootingcommand = new DefaultShootingCommand(m_shooter);
     
     CommandScheduler.getInstance().setDefaultCommand(m_Drive, m_Drivecommand);
     CommandScheduler.getInstance().setDefaultCommand(m_Intake, m_IntakeCommand);
-    CommandScheduler.getInstance().setDefaultCommand(m_Limelight, m_LimelightAlignCommand);
+    // CommandScheduler.getInstance().setDefaultCommand(m_Limelight, m_LimelightAlignCommand);
     CommandScheduler.getInstance().setDefaultCommand(m_ClimbSubsystem, m_ClimbCommand);
     // CommandScheduler.getInstance().setDefaultCommand(m_shooter, m_shootingcommand);
 
@@ -123,7 +123,12 @@ public class RobotContainer {
   }
   
   public Command getAutonomousCommand() {
-    return rotateTest;
+    return new SequentialCommandGroup(
+      new ForwardDrive(m_Drive, 3.35),
+      new RotateDriveCommand(m_Drive, -90),
+      new ForwardDrive(m_Drive, 1.8),
+      new ShootAmpCommand(m_Intake, 750)
+    );
   }
   
 }

@@ -25,7 +25,7 @@ public class DefaultIntakeCommand extends Command{
     @Override
     public void execute() {
         
-        // 
+        // Intake the notes
         if(Input.fireInTheHole() > 0){
 
             if(!m_intake.intakeLimitSwitch.get()){ 
@@ -58,6 +58,11 @@ public class DefaultIntakeCommand extends Command{
         if (m_intake.pivotCanEncoder.getPosition() < -39 && Input.Operator().getRightY() < 0) { 
             m_intake.pivotMotor.set(0);
         } 
+
+        // Reset the intake once limit switch has been hit
+        if (m_intake.intakeLimitSwitch2.get()){
+            m_intake.ResetPivotEncoder();
+        }
 
         // AUTO INTAKE COMMAND
         // if(Input.Operator().getAButton()){

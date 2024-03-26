@@ -5,8 +5,6 @@ import frc.robot.Input;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
 
-import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
-import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -22,9 +20,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class IntakeSubsystem extends ProfiledPIDSubsystem {
 
     public final CANSparkMax pivotMotor, intakeMotor;
-    public final RelativeEncoder pivotCanEncoder; // ,rightCanEncoder; (this variable is null)
+    public final RelativeEncoder pivotCanEncoder;
     public static double pivot_KP = 0.05;
-    public final DigitalInput intakeLimitSwitch = new DigitalInput(2);
+    public final DigitalInput intakeLimitSwitch = new DigitalInput(2); // Limit switch when intaking the notes
+    public final DigitalInput intakeLimitSwitch2 = new DigitalInput(9); // Limit switch to reset the intake pivots to zero
     
     private boolean intaking;
     
@@ -73,9 +72,8 @@ public class IntakeSubsystem extends ProfiledPIDSubsystem {
         SmartDashboard.putNumber("[INTAKE] Left Intake Velocity", pivotMotor.get());
         SmartDashboard.putNumber("[INTAKE] Intake Position", pivotCanEncoder.getPosition()); // Change back to pivotMotor if something is wrong
         SmartDashboard.putNumber("[INTAKE] PID Goal", getController().getGoal().position);
-        SmartDashboard.putBoolean("[INTAKE] Limit Switch", intakeLimitSwitch.get());
-    
-        
+        SmartDashboard.putBoolean("[INTAKE] Note Limit Switch", intakeLimitSwitch.get());
+        SmartDashboard.putBoolean("[INTAKE] Reset Encoder Limit Switch", intakeLimitSwitch2.get());
     }
     
     

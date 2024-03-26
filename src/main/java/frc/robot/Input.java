@@ -20,7 +20,7 @@ public class Input {
     }
 
     public static boolean alignTag(){
-        return driveController.getRightBumper();
+        return driveController.getXButton();
     }
 
     public static double lowerLeftClimb(){
