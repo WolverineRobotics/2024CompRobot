@@ -19,8 +19,8 @@ public final class Constants {
   public static final int kIntakePosessionLimitSwitchChannel = 1;
 
   
-  public static final double kLeftDriverEncoderDistanceConversionFactor = ((24/49.66) / 4) * Units.inchesToMeters(24);
-  public static final double kRightDriverEncoderDistanceConversionFactor= ((24/49.66) / 4) * Units.inchesToMeters(24);
+  public static final double kLeftDriverEncoderDistanceConversionFactor = 0.115 * Units.inchesToMeters(24);
+  public static final double kRightDriverEncoderDistanceConversionFactor= 0.115 * Units.inchesToMeters(24);
   public static DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(Units.inchesToMeters(26));
 
   public static final int kDriverEncoderDistanceConversionFactor= 7;

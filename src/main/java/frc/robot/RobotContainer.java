@@ -115,7 +115,7 @@ public class RobotContainer {
   }
   
   public Command getAutonomousCommand() {
-    return new ForwardDrive(m_Drive, 2);
+    return new ForwardDrive(m_Drive, 5);
   }
   
 }
