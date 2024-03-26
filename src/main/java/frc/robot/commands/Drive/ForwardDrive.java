@@ -19,8 +19,8 @@ public class ForwardDrive extends Command {
     new PIDController(0.03, 0, 0);
 
   private final ProfiledPIDController pid = 
-    new ProfiledPIDController(0.3, 0, 0, 
-    new Constraints(3, 3));
+    new ProfiledPIDController(0.4, 0.05, 0, 
+    new Constraints(8, 5));
 
   public double initLeftEncoder;
   public double initRightEncoder;
@@ -41,7 +41,7 @@ public class ForwardDrive extends Command {
     initLeftEncoder = fDrive.getLeftEncoderPosition();
     initRightEncoder = fDrive.getRightEncoderPosition();
     pid.reset(pid.calculate(0));
-    pid.setTolerance(0.1);
+    pid.setTolerance(0.5);
     // rotPid.reset();
     // rotPid.setSetpoint(fDrive.GetHeading());
   }
@@ -64,11 +64,14 @@ public class ForwardDrive extends Command {
   @Override
   public void end(boolean interrupted) {
     fDrive.AutoDrive(0, 0);
+    System.out.println("AAAAAA FORWARDDRIVECOMMAND FINISHED EEEEEEEEEEEE");
+
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     return pid.atGoal();
+    // return false;
   }
 }

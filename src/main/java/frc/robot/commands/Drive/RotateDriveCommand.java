@@ -13,7 +13,7 @@ public class RotateDriveCommand extends Command{
     private final DriveSubsystem m_drive; 
     private int target;
 
-    private ProfiledPIDController pid = new ProfiledPIDController(0.02, 0, 0.0, new Constraints(350, 200));
+    private ProfiledPIDController pid = new ProfiledPIDController(0.02, 0.005, 0.0, new Constraints(350, 225));
     // private PIDController pid = new PIDController(0.015, 0, 0);
 
     public RotateDriveCommand(DriveSubsystem drive, int targetRotation) {
@@ -21,7 +21,7 @@ public class RotateDriveCommand extends Command{
 
         target = targetRotation;
         addRequirements(drive);
-        pid.setTolerance(10);
+        pid.setTolerance(5);
         SmartDashboard.putNumber("PID SETPOINT", pid.getGoal().position);
     }
     
@@ -36,7 +36,7 @@ public class RotateDriveCommand extends Command{
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() { 
-        m_drive.AutoDrive(-pid.calculate(m_drive.GetHeading()), 0);
+        m_drive.AutoDrive(0, -pid.calculate(m_drive.GetHeading()));
         SmartDashboard.putNumber("ERROR", pid.getPositionError());
     }
 
@@ -44,6 +44,7 @@ public class RotateDriveCommand extends Command{
     @Override
     public void end(boolean interrupted) {
         m_drive.AutoDrive(0, 0);
+        System.out.println("AAAAAA ROTATECOMMAND FINISHED EEEEEEEEEEEE");
     }
 
     // Returns true when the command should end.
