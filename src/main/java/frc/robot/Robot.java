@@ -50,14 +50,14 @@ private Command m_autonomousCommand;
 
 
 
-    if(foldedTimer > 0){
-      foldedTimer -= 20;
-      isFoldedBack = false;
-    }
-    else if(!isFoldedBack && !pivotIsMoving){
-      // isFoldedBack = true;
-      m_robotContainer.getIntakeSubsystem().ResetPivotEncoder();
-    }
+    // if(foldedTimer > 0){
+    //   foldedTimer -= 20;
+    //   isFoldedBack = false;
+    // }
+    // else if(!isFoldedBack && !pivotIsMoving){
+    //   // isFoldedBack = true;
+    //   m_robotContainer.getIntakeSubsystem().ResetPivotEncoder();
+    // }
   }
   
   /** This function is called once each time the robot enters Disabled mode. */
