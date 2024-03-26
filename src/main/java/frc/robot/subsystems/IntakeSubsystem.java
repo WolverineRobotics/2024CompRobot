@@ -54,7 +54,7 @@ public class IntakeSubsystem extends ProfiledPIDSubsystem {
         pivotCanEncoder.setVelocityConversionFactor(1);
 
         // setGoal(10);
-        getController().setTolerance(4);
+        getController().setTolerance(5);
         
         // Initializing Idle Modes for Motors
         pivotMotor.setIdleMode(IdleMode.kCoast);
@@ -66,7 +66,7 @@ public class IntakeSubsystem extends ProfiledPIDSubsystem {
     
     @Override
     public void periodic(){
-        // super.periodic();
+        super.periodic();
         
         SmartDashboard.putNumber("[INTAKE] Intake Current", getIntakeVoltage());
         SmartDashboard.putNumber("[INTAKE] Right Pivot Velocity", pivotMotor.get());
@@ -74,6 +74,8 @@ public class IntakeSubsystem extends ProfiledPIDSubsystem {
         SmartDashboard.putNumber("[INTAKE] Intake Position", pivotCanEncoder.getPosition()); // Change back to pivotMotor if something is wrong
         SmartDashboard.putNumber("[INTAKE] PID Goal", getController().getGoal().position);
         SmartDashboard.putBoolean("[INTAKE] Limit Switch", intakeLimitSwitch.get());
+    
+        
     }
     
     
@@ -83,6 +85,7 @@ public class IntakeSubsystem extends ProfiledPIDSubsystem {
     }
     
     public void setIntakeSpeed(double speed){ intakeMotor.set(speed); }
+    public void setPivotSpeed(double speed){ pivotMotor.set(speed); }
     
     /* I'm not sure why we have methods for brake and coasting?? */
     // public void Brake(){ intakeMotor.setIdleMode(IdleMode.kBrake); }
@@ -107,5 +110,11 @@ public class IntakeSubsystem extends ProfiledPIDSubsystem {
     
     protected double getMeasurement(){
         return pivotCanEncoder.getPosition();
+    }
+
+
+    public void ResetPivotEncoder() {
+        // TODO Auto-generated method stub
+        pivotCanEncoder.setPosition(0);
     };
 }

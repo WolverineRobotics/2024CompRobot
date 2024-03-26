@@ -86,13 +86,13 @@ public final class Constants {
     public static final int kIntakeSubwooferHandoffPosition = 0;
     
     // For Intaking from source(shooter) or ground (intake)
-    public static final int kShooterIntakingPosition = 10;
-    public static final int kIntakeIntakingPosition = -35;
+    public static final int kShooterIntakingPosition = -3;
+    public static final int kIntakeIntakingPosition = -38;
 
     // For regular feeding to shooter 
     public static final int kShooterNonConflictPosition = 90;
     public static final int kShooterDefaultFeedPosition = 60;
-    public static final int kIntakeDefaultFeedPosition = 10;
+    public static final int kIntakeDefaultFeedPosition = -10;
     
     // For Amp Scoring
     public static final int kShooterAmpScoringPosition = 90;

@@ -56,4 +56,12 @@ public class Input {
     public static XboxController Operator(){
         return opController;
     }
+
+    public static boolean AutoShutdown(){
+        return driveController.getStartButton() || opController.getStartButton();
+    }
+
+    // public static boolean IntakeGamepiece(){
+    //     return opController.getRightBumper();
+    // }
 }
