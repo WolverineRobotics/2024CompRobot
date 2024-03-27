@@ -37,9 +37,6 @@ public class RobotContainer {
   private DriveSubsystem m_Drive = new DriveSubsystem();
   private Command m_Drivecommand = new DefaultDriveCommand(m_Drive);
 
-  /* Noah */
-  //private NoahDriveSubsystem m_Noah = new NoahDriveSubsystem();
-
   /* Limelight */
   private LimelightSubsystem m_Limelight = new LimelightSubsystem();
   private DriveSubsystem m_LimelightDrive = new DriveSubsystem();
@@ -78,12 +75,11 @@ public class RobotContainer {
     
     CommandScheduler.getInstance().setDefaultCommand(m_Drive, m_Drivecommand);
     CommandScheduler.getInstance().setDefaultCommand(m_Intake, m_IntakeCommand);
-    CommandScheduler.getInstance().setDefaultCommand(m_Limelight, m_LimelightAlignCommand);
     CommandScheduler.getInstance().setDefaultCommand(m_ClimbSubsystem, m_ClimbCommand);
+    CommandScheduler.getInstance().schedule(new LimelightAlignCommand(m_Limelight, m_LimelightDrive));
     // CommandScheduler.getInstance().setDefaultCommand(m_shooter, m_shootingcommand);
 
     instance = this;
-    // configureBindings();
   }
 
   public DriveSubsystem VroomVroom(){

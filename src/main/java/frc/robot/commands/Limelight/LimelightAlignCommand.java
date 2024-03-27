@@ -111,7 +111,6 @@ public class LimelightAlignCommand extends Command{
         double driveRotate = limelight_TX * STEER_AUTO;
         m_LimelightTurn = driveRotate;
         
-        
         if(limelight_TX > 1.5){
             m_LimelightTurn = (limelight_TX * limelight_KP);
 
