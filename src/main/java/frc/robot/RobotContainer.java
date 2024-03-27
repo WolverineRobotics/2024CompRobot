@@ -5,6 +5,7 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.AutoPositionsCommands.ShootAmpCommand;
 import frc.robot.commands.DefaultCommands.DefaultClimbCommand;
 import frc.robot.commands.DefaultCommands.DefaultDriveCommand;
 import frc.robot.commands.DefaultCommands.DefaultIntakeCommand;
@@ -41,7 +42,8 @@ public class RobotContainer {
 
   /* Limelight */
   private LimelightSubsystem m_Limelight = new LimelightSubsystem();
-  private Command m_LimelightAlignCommand = new LimelightAlignCommand(m_Limelight);
+  private DriveSubsystem m_LimelightDrive = new DriveSubsystem();
+  private Command m_LimelightAlignCommand = new LimelightAlignCommand(m_Limelight, m_LimelightDrive);
 
   /* Shooter */
   // private ShooterSubsystem m_shooter = new ShooterSubsystem();
@@ -60,11 +62,18 @@ public class RobotContainer {
   // private static final SequentialCommandGroup acquiredGamepieceCommandGroup = new SequentialCommandGroup(
   //   new );
 
+  private final SequentialCommandGroup rotateTest = new SequentialCommandGroup(
+    new ForwardDrive(m_Drive, 3.35),
+    new RotateDriveCommand(m_Drive, -90),
+    new ForwardDrive(m_Drive, 1.8),
+    new ShootAmpCommand(m_Intake, 750)
+    );
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
     m_Drivecommand = new DefaultDriveCommand(m_Drive);
-    m_LimelightAlignCommand = new LimelightAlignCommand(m_Limelight);
+    m_LimelightAlignCommand = new LimelightAlignCommand(m_Limelight, m_LimelightDrive);
     // m_shootingcommand = new DefaultShootingCommand(m_shooter);
     
     CommandScheduler.getInstance().setDefaultCommand(m_Drive, m_Drivecommand);
@@ -115,7 +124,12 @@ public class RobotContainer {
   }
   
   public Command getAutonomousCommand() {
-    return null;
+    return new SequentialCommandGroup(
+      new ForwardDrive(m_Drive, 3.35),
+      new RotateDriveCommand(m_Drive, -90),
+      new ForwardDrive(m_Drive, 1.8),
+      new ShootAmpCommand(m_Intake, 750)
+    );
   }
   
 }

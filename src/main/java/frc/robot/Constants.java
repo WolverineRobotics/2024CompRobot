@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.math.util.Units;
+
 public final class Constants {
   
   public static final int LEFT_MOTOR_1 = 5; 
@@ -15,8 +18,11 @@ public final class Constants {
   public static final int kSPosessionLimitSwitchChannel = 1;
   public static final int kIntakePosessionLimitSwitchChannel = 1;
 
-  public static final int kDriverEncoderDistanceConversionFactor= 7;
-
+  
+  public static final double kLeftDriverEncoderDistanceConversionFactor = 0.115 * Units.inchesToMeters(24);
+  public static final double kRightDriverEncoderDistanceConversionFactor= 0.115 * Units.inchesToMeters(24);
+  public static DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(Units.inchesToMeters(26));
+  
   public static final int PIGEON_ID = 1;
 
   /* Driving Constants */
@@ -86,13 +92,13 @@ public final class Constants {
     public static final int kIntakeSubwooferHandoffPosition = 0;
     
     // For Intaking from source(shooter) or ground (intake)
-    public static final int kShooterIntakingPosition = 10;
-    public static final int kIntakeIntakingPosition = -55;
+    public static final int kShooterIntakingPosition = -3;
+    public static final int kIntakeIntakingPosition = -38;
 
     // For regular feeding to shooter 
     public static final int kShooterNonConflictPosition = 90;
     public static final int kShooterDefaultFeedPosition = 60;
-    public static final int kIntakeDefaultFeedPosition = 15;
+    public static final int kIntakeDefaultFeedPosition = -10;
     
     // For Amp Scoring
     public static final int kShooterAmpScoringPosition = 90;

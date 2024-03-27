@@ -4,15 +4,23 @@
 
 package frc.robot;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.AutoPositionsCommands.AutoIntakeCommand;
 import frc.robot.commands.Drive.ForwardDrive;
+import frc.robot.commands.Handoffs.FoldBackCommand;
+import frc.robot.commands.Handoffs.FoldOutCommand;
 
 public class Robot extends TimedRobot {
   public static final String Constants = null;
   public static boolean has_gamepiece, controls_gamepiece;
+  public static boolean isFoldedBack, pivotIsMoving;
+  public static int foldedTimer = 0;
 
 public static Object subsystems;
 
@@ -29,12 +37,29 @@ private Command m_autonomousCommand;
     has_gamepiece = false;
     // Properly carrying the gamepiece
     controls_gamepiece = false;
+    isFoldedBack = true;
+    pivotIsMoving = false;
+
+    SmartDashboard.putBoolean("[INTAKE] IS FOLDED BACK", isFoldedBack);
   }
 
   
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+
+
+
+    // if(foldedTimer > 0){
+    //   foldedTimer -= 20;
+    //   isFoldedBack = false;
+    // }
+    // else if(!isFoldedBack && !pivotIsMoving){
+    //   // isFoldedBack = true;
+    //   m_robotContainer.getIntakeSubsystem().ResetPivotEncoder();
+    // }
+
+    if(Input.opController.getAButtonPressed()) {m_robotContainer.getIntakeSubsystem().ResetPivotEncoder();}
   }
   
   /** This function is called once each time the robot enters Disabled mode. */
@@ -50,15 +75,16 @@ private Command m_autonomousCommand;
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    m_robotContainer.VroomVroom().ResetGyro();
 
-    CommandScheduler.getInstance().schedule(new ForwardDrive(m_robotContainer.VroomVroom()));
-    // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    //CommandScheduler.getInstance().schedule(new ForwardDrive(m_robotContainer.VroomVroom()));
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     
-    // // schedule the autonomous command (example)
-    // if (m_autonomousCommand != null) {
-    //   m_autonomousCommand.schedule();
+    // schedule the autonomous command (example)
+    if (m_autonomousCommand != null) {
+      m_autonomousCommand.schedule();
 
-    // }
+    }
 
     
     
@@ -82,9 +108,26 @@ private Command m_autonomousCommand;
     
   }
   
+  public static void ResetFoldedBackTimer(){
+    foldedTimer = 1000;
+  }
+
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+
+    if(Input.opController.getRightBumperPressed()){
+      new FoldOutCommand(m_robotContainer.getIntakeSubsystem()).
+      andThen(new AutoIntakeCommand(m_robotContainer.getIntakeSubsystem())).schedule();
+    }
+
+    if(Input.opController.getRightBumperReleased()){
+      new FoldBackCommand(m_robotContainer.getIntakeSubsystem()).schedule();
+    }
+
+    if(Input.driveController.getAButtonPressed()){
+      m_robotContainer.VroomVroom().GetPigeon().setYaw(0);
+    }
   }
   
   @Override

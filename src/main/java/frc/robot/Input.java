@@ -20,7 +20,7 @@ public class Input {
     }
 
     public static boolean alignTag(){
-        return driveController.getRightBumper();
+        return driveController.getXButton();
     }
 
     public static double lowerLeftClimb(){
@@ -56,4 +56,12 @@ public class Input {
     public static XboxController Operator(){
         return opController;
     }
+
+    public static boolean AutoShutdown(){
+        return driveController.getStartButton() || opController.getStartButton();
+    }
+
+    // public static boolean IntakeGamepiece(){
+    //     return opController.getRightBumper();
+    // }
 }

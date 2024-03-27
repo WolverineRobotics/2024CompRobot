@@ -56,10 +56,10 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
   private double trackWidth = 25;
   private double wheelRadius = 3;
   private double wheelRadiusMeters = Units.inchesToMeters(wheelRadius);
-  private double encoderPositionAverage;
 
-  private final PIDController left_pid = new PIDController(0.1, 0.03, 0.05);
-  private final PIDController right_pid = new PIDController(0.1, 0.03, 0.05);
+  // Drive Forward PID Controllers
+  private final PIDController forwardDrivePid = new PIDController(0.1, 0.03, 0.05);
+
   private final RamseteController m_RamseteController = new RamseteController();
 
   private SlewRateLimiter slew;
@@ -111,46 +111,59 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
     leftEncoder = leftMaster.getEncoder();
     rightEncoder = rightMaster.getEncoder();
     
-    // rightEncoder.setInverted(true);
+    rightMaster.setInverted(true);
+    leftMaster.setInverted(false);
     
-    leftEncoder.setPositionConversionFactor(Constants.kDriverEncoderDistanceConversionFactor);
-    rightEncoder.setPositionConversionFactor(Constants.kDriverEncoderDistanceConversionFactor);
+    leftEncoder.setPositionConversionFactor(Constants.kLeftDriverEncoderDistanceConversionFactor);
+    rightEncoder.setPositionConversionFactor(Constants.kRightDriverEncoderDistanceConversionFactor);
     
     double x = 0;
     double y = 0;
     // double x = SmartDashboard.getNumber("starting_x", 0);
     // double y = SmartDashboard.getNumber("starting_y", 0);
-    
+
     startPose = new Pose2d(
       new Translation2d(x, y),
       mGyro.getRotation2d()
     );
      
     mOdometry = new DifferentialDriveOdometry(mGyro.getRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition(), startPose);
-
+    
+  }
+  
+  // Profiled PID Commands
+  protected void useOutput(double output, TrapezoidProfile.State setpoint) {
+    SmartDashboard.putNumber("[DRIVE] Output", output);
+    SmartDashboard.putNumber("[DRIVE] Setpoint", setpoint.position);
+    if(!getController().atGoal()) {
+      AutoDrive(0, output);
     }
-
-    // Profiled PID Commands
-    protected void useOutput(double output, TrapezoidProfile.State setpoint) {
-      SmartDashboard.putNumber("[DRIVE] Output", output);
-      SmartDashboard.putNumber("[DRIVE] Setpoint", setpoint.position);
-      if(!getController().atGoal()) {
-        AutoDrive(0, output);
-      }
-    }
-
-    // Get Pigeon Heading
-    protected double getMeasurement() {
-      SmartDashboard.putNumber("[DRIVE] Pigeon Heading", GetHeading());
-      return GetHeading();
-    }
+  }
+  
+  // Get Pigeon Heading
+  protected double getMeasurement() {
+    return GetHeading();
+  }
 
   // Tele-Op Driving 
   public void ArcadeDrive(){
     // driveTrain.arcadeDrive(Input.getHorizontal() * 0.3f, slew.calculate(Input.getVertical()) * 0.3f);
-    driveTrain.arcadeDrive(Input.getHorizontal() * 0.8f, Input.getVertical());
+    driveTrain.arcadeDrive(Input.getVertical(), Input.getHorizontal() * 0.8f);
   }
 
+  // Get Encoder Values
+  public double GetEncoderAverage(){
+    return (leftEncoder.getPosition() + leftEncoder.getPosition()) / 2;
+  }
+
+  public double getLeftEncoderPosition() {
+    return leftEncoder.getPosition();
+  }
+
+  public double getRightEncoderPosition() {
+    return rightEncoder.getPosition();
+  }
+  
   public Pose2d GetPose(){ return mOdometry.getPoseMeters(); }
   public Pigeon2 GetPigeon(){ return mGyro; } 
   public double GetHeading(){ return mPose.getRotation().getDegrees();}
@@ -165,21 +178,30 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
   // }
 
   public void AutoDrive(double speed,double rotation){
-      driveTrain.arcadeDrive(rotation, speed);
+      driveTrain.arcadeDrive(speed, rotation);
     }
 
   public void Rotate(double rotation){
-    // driveTrain.arcadeDrive(rotation, 0);
+    // driveTrain.arcadeDrive(rotation, 0);+
   }
   
-  public DifferentialDriveWheelSpeeds GetWheelSpeeds() {
-    return new DifferentialDriveWheelSpeeds(
-      rightEncoder.getVelocity(),
-      leftEncoder.getVelocity()
-      );
-  }
-  
-  public void SetDriveVoltages(double l_volts, double r_volts){
+  // if (DriverStation.getAlliance() == DriverStation.Alliance.Red){
+    //   new DifferentialDrivePoseEstimator(
+      //     m_kinematics, 
+      //     m_gyro.getRotation2d(),
+      //     leftEncoder.getDistance(), 
+      //     rightEncoder.getDistance() 
+      //     m_pose);
+      // }
+      
+      public DifferentialDriveWheelSpeeds GetWheelSpeeds() {
+        return new DifferentialDriveWheelSpeeds(
+          rightEncoder.getVelocity(),
+          leftEncoder.getVelocity()
+          );
+        }
+        
+        public void SetDriveVoltages(double l_volts, double r_volts){
     rightMaster.setVoltage(r_volts);
     leftMaster.setVoltage(l_volts);
     driveTrain.feed();
@@ -187,12 +209,12 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
   
   public void ResetGyro(){
     mGyro.reset();
+    mGyro.setYaw(0);
   }
   
   public double GetTurnRate(){
     return mGyro.getRate();
   }
-  
     
   @Override
   public void periodic() {
@@ -201,10 +223,11 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
     
     SmartDashboard.putNumber("[DRIVE] Left Distance ", leftEncoder.getPosition());
     SmartDashboard.putNumber("[DRIVE] Right Distance ", rightEncoder.getPosition());
-
+    
     SmartDashboard.putNumber("[DRIVE] Left Counts per Revolution", leftEncoder.getCountsPerRevolution());
     SmartDashboard.putNumber("[DRIVE] Right Counts per Revolution", rightEncoder.getCountsPerRevolution());
-
+    SmartDashboard.putNumber("[DRIVE] Pigeon Heading", GetHeading());
+    
   }
   
   /* Came with the template */
