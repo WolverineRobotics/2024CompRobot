@@ -41,9 +41,9 @@ public class RobotContainer {
   //private NoahDriveSubsystem m_Noah = new NoahDriveSubsystem();
 
   /* Limelight */
-  private LimelightSubsystem m_Limelight = new LimelightSubsystem();
-  private DriveSubsystem m_LimelightDrive = new DriveSubsystem();
-  private Command m_LimelightAlignCommand = new LimelightAlignCommand(m_Limelight, m_LimelightDrive);
+  // private LimelightSubsystem m_Limelight = new LimelightSubsystem();
+  // private DriveSubsystem m_LimelightDrive = new DriveSubsystem();
+  // private Command m_LimelightAlignCommand = new LimelightAlignCommand(m_Limelight, m_LimelightDrive);
 
   /* Shooter */
   // private ShooterSubsystem m_shooter = new ShooterSubsystem();
@@ -73,12 +73,12 @@ public class RobotContainer {
   public RobotContainer() {
 
     m_Drivecommand = new DefaultDriveCommand(m_Drive);
-    m_LimelightAlignCommand = new LimelightAlignCommand(m_Limelight, m_LimelightDrive);
+    // m_LimelightAlignCommand = new LimelightAlignCommand(m_Limelight, m_LimelightDrive);
     // m_shootingcommand = new DefaultShootingCommand(m_shooter);
     
     CommandScheduler.getInstance().setDefaultCommand(m_Drive, m_Drivecommand);
     CommandScheduler.getInstance().setDefaultCommand(m_Intake, m_IntakeCommand);
-    CommandScheduler.getInstance().setDefaultCommand(m_Limelight, m_LimelightAlignCommand);
+    // CommandScheduler.getInstance().setDefaultCommand(m_Limelight, m_LimelightAlignCommand);
     CommandScheduler.getInstance().setDefaultCommand(m_ClimbSubsystem, m_ClimbCommand);
     // CommandScheduler.getInstance().setDefaultCommand(m_shooter, m_shootingcommand);
 
