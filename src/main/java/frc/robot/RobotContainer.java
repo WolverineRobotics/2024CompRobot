@@ -5,6 +5,8 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.AutoPositionsCommands.FoldBackCommand;
+import frc.robot.commands.AutoPositionsCommands.FoldOutCommand;
 import frc.robot.commands.AutoPositionsCommands.ShootAmpCommand;
 import frc.robot.commands.DefaultCommands.DefaultClimbCommand;
 import frc.robot.commands.DefaultCommands.DefaultDriveCommand;
@@ -15,8 +17,6 @@ import frc.robot.commands.Drive.ForwardDrive;
 import frc.robot.commands.Drive.RotateDriveCommand;
 import frc.robot.commands.Groups.PosessGamepieceCommand;
 import frc.robot.commands.Groups.StartingPositionsCommand;
-import frc.robot.commands.Handoffs.FoldBackCommand;
-import frc.robot.commands.Handoffs.FoldOutCommand;
 import frc.robot.commands.Handoffs.StandardHandoffCommand;
 import frc.robot.commands.Limelight.LimelightAlignCommand;
 import frc.robot.subsystems.ClimbSubsystem;

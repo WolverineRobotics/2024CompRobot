@@ -12,9 +12,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.AutoPositionsCommands.AutoIntakeCommand;
+import frc.robot.commands.AutoPositionsCommands.FoldBackCommand;
+import frc.robot.commands.AutoPositionsCommands.FoldOutCommand;
 import frc.robot.commands.Drive.ForwardDrive;
-import frc.robot.commands.Handoffs.FoldBackCommand;
-import frc.robot.commands.Handoffs.FoldOutCommand;
 
 public class Robot extends TimedRobot {
   public static final String Constants = null;

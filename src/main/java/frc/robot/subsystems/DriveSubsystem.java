@@ -180,6 +180,11 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
   public void AutoDrive(double speed,double rotation){
       driveTrain.arcadeDrive(speed, rotation);
     }
+  
+  public void TankDrive(double leftSpeed,double rightSpeed){
+    driveTrain.tankDrive(leftSpeed, rightSpeed);
+  }
+
 
   public void Rotate(double rotation){
     // driveTrain.arcadeDrive(rotation, 0);+
