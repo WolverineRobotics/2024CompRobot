@@ -3,9 +3,6 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot;
-
-import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
-
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -15,6 +12,7 @@ import frc.robot.commands.AutoPositionsCommands.AutoIntakeCommand;
 import frc.robot.commands.Drive.ForwardDrive;
 import frc.robot.commands.Handoffs.FoldBackCommand;
 import frc.robot.commands.Handoffs.FoldOutCommand;
+import frc.robot.commands.Limelight.LimelightAlignCommand;
 
 public class Robot extends TimedRobot {
   public static final String Constants = null;
@@ -125,9 +123,14 @@ private Command m_autonomousCommand;
       new FoldBackCommand(m_robotContainer.getIntakeSubsystem()).schedule();
     }
 
+    if(Input.driveController.getXButtonPressed()){
+      new LimelightAlignCommand(m_robotContainer.getLimelightSubsystem(), m_robotContainer.getLimelightDrive()).schedule();
+    }
+
     if(Input.driveController.getAButtonPressed()){
       m_robotContainer.VroomVroom().GetPigeon().setYaw(0);
     }
+
   }
   
   @Override

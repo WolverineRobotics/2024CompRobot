@@ -110,9 +110,7 @@ public class IntakeSubsystem extends ProfiledPIDSubsystem {
         return pivotCanEncoder.getPosition();
     }
 
-
     public void ResetPivotEncoder() {
-        // TODO Auto-generated method stub
         pivotCanEncoder.setPosition(0);
     };
 }

@@ -110,12 +110,13 @@ public class LimelightAlignCommand extends Command{
         // Will continuously rotate until it aligns
         double driveRotate = limelight_TX * STEER_AUTO;
         m_LimelightTurn = driveRotate;
-        
+    
+        // Check for an offset of anything greater/less than 1.5 degrees
         if(limelight_TX > 1.5){
-            m_LimelightTurn = (limelight_TX * limelight_KP);
+            m_LimelightTurn = (limelight_TX * limelight_KP) - STEER_AUTO;
 
-        } else if(limelight_TX < 1.5){
-            m_LimelightTurn = (limelight_TX * -limelight_KP);
+        } else if(limelight_TX < -1.5){
+            m_LimelightTurn = (limelight_TX * limelight_KP) + STEER_AUTO;
         }
 
         // Set a speed restraint while driving forward

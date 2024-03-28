@@ -1,13 +1,7 @@
 package frc.robot.commands.AutoPositionsCommands;
-
-import com.revrobotics.CANSparkMax;
-
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.Input;
-import frc.robot.Robot;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.Constants;
+import frc.robot.Robot;
 
 public class FlipIntakeCommand extends Command {
 

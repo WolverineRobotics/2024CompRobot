@@ -24,12 +24,9 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 public class RobotContainer {
 
@@ -55,10 +52,6 @@ public class RobotContainer {
 
   public static RobotContainer instance;
 
-  // private static final SequentialCommandGroup postPosessionCommandGroup;
-  // private static final SequentialCommandGroup acquiredGamepieceCommandGroup = new SequentialCommandGroup(
-  //   new );
-
   private final SequentialCommandGroup rotateTest = new SequentialCommandGroup(
     new ForwardDrive(m_Drive, 3.35),
     new RotateDriveCommand(m_Drive, -90),
@@ -70,7 +63,6 @@ public class RobotContainer {
   public RobotContainer() {
 
     m_Drivecommand = new DefaultDriveCommand(m_Drive);
-    m_LimelightAlignCommand = new LimelightAlignCommand(m_Limelight, m_LimelightDrive);
     // m_shootingcommand = new DefaultShootingCommand(m_shooter);
     
     CommandScheduler.getInstance().setDefaultCommand(m_Drive, m_Drivecommand);
@@ -92,6 +84,14 @@ public class RobotContainer {
 
   public ClimbSubsystem getClimbSubsystem(){
     return m_ClimbSubsystem;
+  }
+
+  public LimelightSubsystem getLimelightSubsystem(){
+    return m_Limelight;
+  }
+
+  public DriveSubsystem getLimelightDrive(){
+    return m_LimelightDrive;
   }
 
   private void configureBindings() {
