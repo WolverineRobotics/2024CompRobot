@@ -55,7 +55,7 @@ public class ForwardDrive extends Command {
     newEncoderAverage = (currentLeftEncoderValue+currentRightEncoderValue)/2;
   
     double driveSpeed = pid.calculate(newEncoderAverage);
-    fDrive.AutoDrive(driveSpeed, rotPid.calculate(fDrive.GetHeading()));
+    // fDrive.AutoDrive(driveSpeed, rotPid.calculate(fDrive.GetHeading()));
     fDrive.AutoDrive(driveSpeed, 0);
     SmartDashboard.putNumber("SPEED OF DRIVE", driveSpeed);
   }

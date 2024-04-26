@@ -27,7 +27,7 @@ public class FoldOutCommand extends Command{
     @Override
     public void execute() {
         intake.setPivotSpeed(-0.5);
-        intake.setIntakeSpeed(-0.6);
+        intake.setIntakeSpeed(-1);
 
     }
     

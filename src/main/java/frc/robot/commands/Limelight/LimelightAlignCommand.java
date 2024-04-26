@@ -13,21 +13,21 @@ import frc.robot.AprilTagData;
 
 public class LimelightAlignCommand extends Command{
 
-    private DriveSubsystem m_Drive;
+    private DriveSubsystem m_LimelightDrive;
     private XboxController dController;
 
     private LimelightSubsystem m_Limelight;
     private DriveSubsystem m_DriveSubsystem;
 
-    private double m_LimelightThrottle = 0;
-    private double m_LimelightTurn = 0;
+    private double m_LimelightThrottle;
+    private double m_LimelightTurn;
 
     public boolean m_AprilTaginSight = false;
 
     public LimelightAlignCommand(LimelightSubsystem limelight, DriveSubsystem drive){
 
         m_Limelight = limelight;
-        m_Drive = drive;
+        m_LimelightDrive = drive;
         addRequirements(limelight, drive);
     }
 
@@ -37,29 +37,31 @@ public class LimelightAlignCommand extends Command{
         trackTarget();
 
         double throttle = Input.getVertical();
-        double turn = LimelightHelpers.getTX(""); 
+        double turn = Input.getHorizontal();
+
         double distance = LimelightHelpers.getTA("");
-        boolean auto = Input.alignTag();
+        double limit = 0.5;
         
         throttle *= 0.5;
         turn *= 0.05;
 
-        double limit = 0.5;
-
         if(turn < -limit){turn = -limit;}
         if(turn > limit){turn = limit;}
 
-        if(auto)
+        if(Input.alignTag())
         {
+            LimelightHelpers.setLEDMode_ForceOn("");
+
             if (m_AprilTaginSight)
             {
                 if (distance >= 2){throttle = -limit;}
                 else if(distance < 1.5){throttle = limit;}
                 else{throttle = 0;}
-                m_Drive.AutoDrive(-throttle, turn);
+                m_LimelightDrive.AutoDrive(-throttle, turn);
             } 
 
-            else {m_Drive.Rotate(0);}
+            else {m_LimelightDrive.Rotate(0);}
+            LimelightHelpers.setLEDMode_ForceOff("");
             end();
         }
 
@@ -68,6 +70,57 @@ public class LimelightAlignCommand extends Command{
         SmartDashboard.putNumber("[LIMELIGHT] TY", getLimelightY());
         SmartDashboard.putNumber("[LIMELIGHT] TA", getLimelightA());
         SmartDashboard.putBoolean("[LIMELIGHT] TV", getLimelightV());
+    }
+
+    /* TRACKING METHOD */
+    private void trackTarget()
+    {
+        // Definitely needs configuration, but we ball
+        final double DIST_BETWEEN = Constants.OperatorConstants.TAG_TO_ROBOT;
+        final double MAX_SPEED = 0.5;
+        final double STEER_AUTO = 0.03;
+        final double THROTTLE_AUTO = 0.02;
+        
+        double limelight_KP = 0.05;
+
+        double limelight_TX = LimelightHelpers.getTX(""); // Horizontal Offset (-29.8 to 29.8 Degrees)
+        double limelight_TY = LimelightHelpers.getTY(""); // Vertical Offset (-24.85 to 24.85 Degrees)
+        double limelight_TA = LimelightHelpers.getTA(""); // Target Area (0% - 100% of the Tag)
+        boolean limelight_TV = LimelightHelpers.getTV(""); // Valid Targeting (True/False))
+        
+        // The values in which we want the robot to turn/throttle upon detection
+        double m_LimelightThrottle = 0;
+        double m_LimelightTurn = 0;
+
+        // When there's no AprilTag detection
+        if (limelight_TV != true)
+        {
+            m_AprilTaginSight = false;
+            m_LimelightThrottle = 0;
+            m_LimelightTurn = 0;
+            return;
+        }
+
+        m_AprilTaginSight = true;
+        
+        // Will continuously drive forward until the set target area has been reached
+        double driveForward = (DIST_BETWEEN - limelight_TA) * THROTTLE_AUTO;
+        m_LimelightThrottle = driveForward;
+
+        // Will continuously rotate until it aligns
+        double driveRotate = limelight_TX * STEER_AUTO;
+        m_LimelightTurn = driveRotate;
+    
+        // Check for anything beyond a tolerance of +- 1.5 degrees
+        if(limelight_TX > 1.5){
+            m_LimelightTurn = (limelight_TX * limelight_KP) - STEER_AUTO;
+
+        } else if(limelight_TX < -1.5){
+            m_LimelightTurn = (limelight_TX * limelight_KP) + STEER_AUTO;
+        }
+
+        // Set a speed restraint while driving forward
+        if (m_LimelightThrottle > MAX_SPEED){m_LimelightThrottle = MAX_SPEED;} 
     }
 
     /* GET LIMELIGHT VALUES */
@@ -93,47 +146,6 @@ public class LimelightAlignCommand extends Command{
     {
         boolean tv = LimelightHelpers.getTV("");
         return tv;
-    }
-
-    /* TRACKING METHOD */
-    private void trackTarget()
-    {
-        // Definitely needs configuration, but we ball
-        final double DIST_BETWEEN = Constants.OperatorConstants.TAG_TO_ROBOT;
-        final double MAX_SPEED = 0.5;
-        final double STEER_AUTO = 0.03;
-        final double THROTTLE_AUTO = 0.02;
-
-        double tx = LimelightHelpers.getTX(""); // Horizontal Offset (-29.8 to 29.8 Degrees)
-        double ty = LimelightHelpers.getTY(""); // Vertical Offset (-24.85 to 24.85 Degrees)
-        double ta = LimelightHelpers.getTA(""); // Target Area (0% - 100% of the Tag)
-        boolean tv = LimelightHelpers.getTV(""); // Valid Targeting (True/False))
-        
-        // The values in which we want the robot to turn/throttle upon detection
-        double m_LimelightThrottle = 0;
-        double m_LimelightTurn = 0;
-
-        // When there's no AprilTag detection
-        if (tv != true)
-        {
-            m_AprilTaginSight = false;
-            m_LimelightThrottle = 0;
-            m_LimelightTurn = 0;
-            return;
-        }
-
-        m_AprilTaginSight = true;
-        
-        // Will continuously drive forward until the set target area has been reached
-        double driveForward = (DIST_BETWEEN - ta) * THROTTLE_AUTO;
-        m_LimelightThrottle = driveForward;
-
-        // Will continuously rotate until it aligns
-        double driveRotate = tx * STEER_AUTO;
-        m_LimelightTurn = driveRotate;
-
-        // Set a speed restraint while driving forward
-        if  (m_LimelightThrottle > MAX_SPEED){m_LimelightThrottle = MAX_SPEED;} 
     }
 
     public boolean isFinished(){

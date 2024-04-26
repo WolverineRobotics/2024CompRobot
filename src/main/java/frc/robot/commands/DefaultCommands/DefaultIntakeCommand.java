@@ -39,7 +39,7 @@ public class DefaultIntakeCommand extends Command{
 
         // Shooting out of intake
         else if(Input.AmpScore()){
-            m_intake.setIntakeSpeed(-1);
+            m_intake.setIntakeSpeed(-0.9);
         }
 
         else{
@@ -60,9 +60,9 @@ public class DefaultIntakeCommand extends Command{
         } 
 
         // Reset the intake once limit switch has been hit
-        if (m_intake.intakeLimitSwitch2.get()){
-            m_intake.ResetPivotEncoder();
-        }
+        // if (m_intake.intakeLimitSwitch2.get()){
+        //     m_intake.ResetPivotEncoder();
+        // }
 
         // AUTO INTAKE COMMAND
         // if(Input.Operator().getAButton()){

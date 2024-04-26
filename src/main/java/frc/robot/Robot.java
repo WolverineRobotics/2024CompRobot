@@ -7,20 +7,36 @@ package frc.robot;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.AutoPositionsCommands.AutoIntakeCommand;
+import frc.robot.commands.AutoPositionsCommands.ShootAmpCommand;
 import frc.robot.commands.Drive.ForwardDrive;
+import frc.robot.commands.Drive.RotateDriveCommand;
 import frc.robot.commands.Handoffs.FoldBackCommand;
 import frc.robot.commands.Handoffs.FoldOutCommand;
+import frc.robot.commands.Limelight.LimelightAlignCommand;
+import frc.robot.subsystems.DriveSubsystem;
 
 public class Robot extends TimedRobot {
+
   public static final String Constants = null;
   public static boolean has_gamepiece, controls_gamepiece;
   public static boolean isFoldedBack, pivotIsMoving;
   public static int foldedTimer = 0;
+  
+  public static final String kForwardAuto = "Default Auto";
+  public static final String kPreloadAmpAuto = "Preload Amp Auto (Delayed)";
+  public static final String kPreloadAmpAutoInstant = "Preload Amp Auto (No Delay)";
+  public static String m_AutoChosen;
+  public static SendableChooser<String> autoChooser = new SendableChooser<>();
 
 public static Object subsystems;
 
@@ -32,6 +48,11 @@ private Command m_autonomousCommand;
   public void robotInit() {
     m_robotContainer = new RobotContainer();
     CameraServer.startAutomaticCapture();
+
+    // autoChooser.setDefaultOption("Default Auto", kForwardAuto);
+    // autoChooser.addOption("Amp Auto (Delay)", kPreloadAmpAuto);
+    // autoChooser.addOption("Amp Auto (No Delay)", kPreloadAmpAutoInstant);
+    // SmartDashboard.putData("Auto Choices", autoChooser);
     
     // Set to false if there is not in fact a gamepiece on starting config.
     has_gamepiece = false;
@@ -79,17 +100,15 @@ private Command m_autonomousCommand;
 
     //CommandScheduler.getInstance().schedule(new ForwardDrive(m_robotContainer.VroomVroom()));
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+
+    // m_AutoChosen = autoChooser.getSelected();
+    // System.out.println("Auto Selected: " + m_AutoChosen);
     
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
 
-    }
-
-    
-    
-    // LimelightHelpers.setLEDMode_ForceOn("");
-    
+    } 
   }
   
   /** This function is called periodically during autonomous. */
@@ -128,6 +147,10 @@ private Command m_autonomousCommand;
     if(Input.driveController.getAButtonPressed()){
       m_robotContainer.VroomVroom().GetPigeon().setYaw(0);
     }
+
+    /*if(Input.alignTag()){
+      new LimelightAlignCommand(m_robotContainer.getLimelightSubsystem(), m_robotContainer.getLimelightDrive()).schedule();
+    }*/
   }
   
   @Override

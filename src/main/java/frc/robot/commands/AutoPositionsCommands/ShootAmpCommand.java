@@ -25,7 +25,7 @@ public class ShootAmpCommand extends Command{
     public void execute() {        
         mIntake.intakeMotor.set(-1);
         _milliseconds -= 20;
-    }
+    } 
     
     // Called once the command ends or is interrupted.
     @Override
