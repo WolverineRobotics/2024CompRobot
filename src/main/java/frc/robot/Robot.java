@@ -147,7 +147,11 @@ private Command m_autonomousCommand;
     if(Input.driveController.getAButtonPressed()){
       m_robotContainer.VroomVroom().GetPigeon().setYaw(0);
     }
+    
+    if(Input.driveController.getXButton()){
+      new LimelightAlignCommand(m_robotContainer.getLimelightSubsystem(), m_robotContainer.getDriveSubsystem()).schedule();
 
+    }
     /*if(Input.alignTag()){
       new LimelightAlignCommand(m_robotContainer.getLimelightSubsystem(), m_robotContainer.getLimelightDrive()).schedule();
     }*/

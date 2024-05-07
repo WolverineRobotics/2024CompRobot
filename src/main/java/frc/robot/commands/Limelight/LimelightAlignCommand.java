@@ -13,7 +13,7 @@ import frc.robot.AprilTagData;
 
 public class LimelightAlignCommand extends Command{
 
-    private DriveSubsystem m_LimelightDrive;
+    //private DriveSubsystem m_LimelightDrive;
     private XboxController dController;
 
     private LimelightSubsystem m_Limelight;
@@ -27,7 +27,7 @@ public class LimelightAlignCommand extends Command{
     public LimelightAlignCommand(LimelightSubsystem limelight, DriveSubsystem drive){
 
         m_Limelight = limelight;
-        m_LimelightDrive = drive;
+        m_DriveSubsystem = drive;
         addRequirements(limelight, drive);
     }
 
@@ -36,33 +36,49 @@ public class LimelightAlignCommand extends Command{
     public void execute(){
         trackTarget();
 
-        double throttle = Input.getVertical();
-        double turn = Input.getHorizontal();
-
         double distance = LimelightHelpers.getTA("");
-        double limit = 0.5;
+        double angle = LimelightHelpers.getTX("");
+
+        double limit = 0.35; // Turning Limit
+        double throttleLimit = 0.35; // Throttle Limit 
+
+        double limelightThrottleSetpoint = 4.3;
+        double limelightThrottleError;
+        double limelightAngleError;
         
-        throttle *= 0.5;
-        turn *= 0.05;
+        double throttle = 0.095;
+        double turn = 0.05;
 
-        if(turn < -limit){turn = -limit;}
-        if(turn > limit){turn = limit;}
-
-        if(Input.alignTag())
+        if (Input.alignTag())
         {
             LimelightHelpers.setLEDMode_ForceOn("");
 
             if (m_AprilTaginSight)
             {
-                if (distance >= 2){throttle = -limit;}
-                else if(distance < 1.5){throttle = limit;}
-                else{throttle = 0;}
-                m_LimelightDrive.AutoDrive(-throttle, turn);
+
+                limelightThrottleError = (limelightThrottleSetpoint - distance);
+                limelightAngleError = (limelightThrottleSetpoint - angle);
+
+                if(turn < -limit){turn = -limit;}
+                if(turn > limit){turn = limit;}
+                if(throttle > throttleLimit){throttle = throttleLimit;}
+
+                throttle = limelightThrottleError * 0.16;
+
+                if(limelightThrottleError < 0){
+                    throttle = limelightThrottleError * 0.07;
+                }
+
+                turn = limelightAngleError * -0.017;
+
+                System.out.println(limelightThrottleError);
+                m_DriveSubsystem.AutoDrive(throttle, turn);
             } 
 
-            else {m_LimelightDrive.Rotate(0);}
-            LimelightHelpers.setLEDMode_ForceOff("");
+        } else {
+            m_DriveSubsystem.Rotate(0);
             end();
+
         }
 
         SmartDashboard.putNumber("[LIMELIGHT] Turn", turn);
@@ -70,14 +86,15 @@ public class LimelightAlignCommand extends Command{
         SmartDashboard.putNumber("[LIMELIGHT] TY", getLimelightY());
         SmartDashboard.putNumber("[LIMELIGHT] TA", getLimelightA());
         SmartDashboard.putBoolean("[LIMELIGHT] TV", getLimelightV());
+
     }
 
     /* TRACKING METHOD */
     private void trackTarget()
     {
-        // Definitely needs configuration, but we ball
+
         final double DIST_BETWEEN = Constants.OperatorConstants.TAG_TO_ROBOT;
-        final double MAX_SPEED = 0.5;
+        final double MAX_SPEED = 0.1;
         final double STEER_AUTO = 0.03;
         final double THROTTLE_AUTO = 0.02;
         
@@ -149,16 +166,19 @@ public class LimelightAlignCommand extends Command{
     }
 
     public boolean isFinished(){
-        // This will try to check if the tag is within a desired error range of at least 2.5%
-        if(Math.abs(Constants.OperatorConstants.TAG_TO_ROBOT - LimelightHelpers.getTA("")) < 2.5){
-            return true;
-        } else {
-            return false;
-        }
+        // // This will try to check if the tag is within a desired error range of at least 2.5%
+        // if(Math.abs(Constants.OperatorConstants.TAG_TO_ROBOT - LimelightHelpers.getTA("")) < 2.5){
+        //     return true;
+        // } else {
+        //     return false;
+        // }
+        return true;
     }
     
     public void end(){
+        LimelightHelpers.setLEDMode_ForceOff("");
         m_LimelightThrottle = 0.0;
         m_LimelightTurn = 0.0;
+        isFinished();
     }
 }

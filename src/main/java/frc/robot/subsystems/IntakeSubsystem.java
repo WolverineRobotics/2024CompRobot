@@ -56,7 +56,7 @@ public class IntakeSubsystem extends ProfiledPIDSubsystem {
         getController().setTolerance(5);
         
         // Initializing Idle Modes for Motors
-        pivotMotor.setIdleMode(IdleMode.kCoast);
+        pivotMotor.setIdleMode(IdleMode.kBrake);
         intakeMotor.setIdleMode(IdleMode.kBrake);
         
         intaking = false;

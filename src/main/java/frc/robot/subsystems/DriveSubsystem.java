@@ -182,7 +182,7 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
     }
 
   public void Rotate(double rotation){
-    // driveTrain.arcadeDrive(rotation, 0);+
+    driveTrain.arcadeDrive(rotation, 0);
   }
   
   // if (DriverStation.getAlliance() == DriverStation.Alliance.Red){
