@@ -47,13 +47,21 @@ public class LimelightAlignCommand extends Command{
         double limit = 0.35; // Turning Limit
         double throttleLimit = 0.35; // Throttle Limit 
 
-        double limelightThrottleSetpoint = 4.3;
-        double experimentalSetpoint = LimelightSubsystem.estimatedDistance(15); // The estimated distance between the tag and the robot
+        double limelightThrottleSetpoint = 3.5;
+        double experimentalSetpoint = LimelightSubsystem.estimatedDistance(20); // The estimated distance between the tag and the robot
+
+        double limelightAngleThreshold = 0.2;
         double limelightThrottleError;
         double limelightAngleError;
+
+        double[] cameraCenter = {0, 0 ,0};
         
         double throttle = 0.095;
         double turn = 0.05;
+
+        if(LimelightHelpers.getTV("") == true){
+            System.out.println(LimelightSubsystem.estimatedDistance(19));
+        }
 
         if (Input.alignTag())
         {
@@ -80,13 +88,19 @@ public class LimelightAlignCommand extends Command{
 
                 turn = limelightAngleError * -0.017;
 
-                // System.out.println(limelightThrottleError);
-                System.out.println(limelightAngleError);
+                // if (limelightAngleError > limelightAngleThreshold){
+                //     turn = (limelightThrottleError * 0.07) - limelightAngleThreshold;
+                // }
+
+                // if (limelightAngleError < limelightAngleThreshold){
+                //     turn = (limelightThrottleError * 0.07) + limelightAngleThreshold;
+                // }
+            
                 m_DriveSubsystem.AutoDrive(throttle, turn);
             } 
 
         } else {
-            m_DriveSubsystem.Rotate(0);
+            m_DriveSubsystem.AutoDrive(0,0);
             LimelightHelpers.setLEDMode_ForceOff("");
             end();
 

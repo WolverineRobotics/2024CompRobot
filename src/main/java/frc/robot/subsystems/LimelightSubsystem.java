@@ -50,14 +50,13 @@ public class LimelightSubsystem extends ProfiledPIDSubsystem {
         SmartDashboard.putNumber("LL_AprilTag_id", tagId);
     }
 
-    public static double estimatedDistance(double goalHeightMeters){
+    public static double estimatedDistance(double goalHeightInches){
         double tagAngle = LimelightHelpers.getTY("");
 
-        double limelightOffsetAngle = Constants.Positional.limelightMountAngle; // Angular offset vertically
-        double limelightHeightMeters = Constants.Positional.limelightHeight; // Height from ground -> lens
+        double limelightOffsetAngle = 19.5; // Angular offset vertically
+        double limelightHeightInches = Constants.Positional.limelightHeight; // Height from ground -> lens
         double goalAngle = Math.toRadians(limelightOffsetAngle + tagAngle);
-
-        return (goalHeightMeters - limelightHeightMeters) / (Math.tan(goalAngle));
+        return Math.abs(goalHeightInches - limelightHeightInches) / (Math.tan(goalAngle)); // Distance once limelight aligns (in inches)
     }
     
     @Override
