@@ -1,6 +1,7 @@
 package frc.robot.commands.Limelight;
 
 import edu.wpi.first.apriltag.AprilTag;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -22,7 +23,11 @@ public class LimelightAlignCommand extends Command{
     private double m_LimelightThrottle;
     private double m_LimelightTurn;
 
+    public double xSum = 0;
+    public double ySum = 0;
+
     public boolean m_AprilTaginSight = false;
+    public double[] cameraCornerCoordinates = {0, 0, 0, 0};
 
     public LimelightAlignCommand(LimelightSubsystem limelight, DriveSubsystem drive){
 
@@ -43,6 +48,7 @@ public class LimelightAlignCommand extends Command{
         double throttleLimit = 0.35; // Throttle Limit 
 
         double limelightThrottleSetpoint = 4.3;
+        double experimentalSetpoint = LimelightSubsystem.estimatedDistance(15); // The estimated distance between the tag and the robot
         double limelightThrottleError;
         double limelightAngleError;
         
@@ -55,14 +61,17 @@ public class LimelightAlignCommand extends Command{
 
             if (m_AprilTaginSight)
             {
-
+                
+                /* This block applies kP control in order to try and correct the oscillations
+                   and error once the robot has reached the setpoint */
                 limelightThrottleError = (limelightThrottleSetpoint - distance);
                 limelightAngleError = (limelightThrottleSetpoint - angle);
 
                 if(turn < -limit){turn = -limit;}
                 if(turn > limit){turn = limit;}
                 if(throttle > throttleLimit){throttle = throttleLimit;}
-
+                
+                // Output = e(t) * kP
                 throttle = limelightThrottleError * 0.16;
 
                 if(limelightThrottleError < 0){
@@ -71,12 +80,14 @@ public class LimelightAlignCommand extends Command{
 
                 turn = limelightAngleError * -0.017;
 
-                System.out.println(limelightThrottleError);
+                // System.out.println(limelightThrottleError);
+                System.out.println(limelightAngleError);
                 m_DriveSubsystem.AutoDrive(throttle, turn);
             } 
 
         } else {
             m_DriveSubsystem.Rotate(0);
+            LimelightHelpers.setLEDMode_ForceOff("");
             end();
 
         }
@@ -93,12 +104,12 @@ public class LimelightAlignCommand extends Command{
     private void trackTarget()
     {
 
-        final double DIST_BETWEEN = Constants.OperatorConstants.TAG_TO_ROBOT;
+        final double TAG_AREA = Constants.OperatorConstants.TAG_TO_ROBOT;
         final double MAX_SPEED = 0.1;
         final double STEER_AUTO = 0.03;
         final double THROTTLE_AUTO = 0.02;
         
-        double limelight_KP = 0.05;
+        double limelight_KP = 0.035;
 
         double limelight_TX = LimelightHelpers.getTX(""); // Horizontal Offset (-29.8 to 29.8 Degrees)
         double limelight_TY = LimelightHelpers.getTY(""); // Vertical Offset (-24.85 to 24.85 Degrees)
@@ -121,18 +132,18 @@ public class LimelightAlignCommand extends Command{
         m_AprilTaginSight = true;
         
         // Will continuously drive forward until the set target area has been reached
-        double driveForward = (DIST_BETWEEN - limelight_TA) * THROTTLE_AUTO;
+        double driveForward = (TAG_AREA - limelight_TA) * THROTTLE_AUTO;
         m_LimelightThrottle = driveForward;
 
         // Will continuously rotate until it aligns
         double driveRotate = limelight_TX * STEER_AUTO;
         m_LimelightTurn = driveRotate;
     
-        // Check for anything beyond a tolerance of +- 1.5 degrees
-        if(limelight_TX > 1.5){
+        // Check for anything beyond a tolerance of +- 2 degrees
+        if(limelight_TX > 2){
             m_LimelightTurn = (limelight_TX * limelight_KP) - STEER_AUTO;
 
-        } else if(limelight_TX < -1.5){
+        } else if(limelight_TX < -2){
             m_LimelightTurn = (limelight_TX * limelight_KP) + STEER_AUTO;
         }
 
@@ -166,17 +177,28 @@ public class LimelightAlignCommand extends Command{
     }
 
     public boolean isFinished(){
-        // // This will try to check if the tag is within a desired error range of at least 2.5%
-        // if(Math.abs(Constants.OperatorConstants.TAG_TO_ROBOT - LimelightHelpers.getTA("")) < 2.5){
-        //     return true;
-        // } else {
-        //     return false;
-        // }
         return true;
+    }
+
+
+    public double[] getCameraCenter(){
+        
+        // Get the x, y coordinates from the box that the limelight detects
+        double[] xCoordinates = NetworkTableInstance.getDefault().getTable("").getEntry("tcornx").getDoubleArray(cameraCornerCoordinates);
+        double[] yCoordinates = NetworkTableInstance.getDefault().getTable("").getEntry("tcorny").getDoubleArray(cameraCornerCoordinates);
+
+        // For the corners of the x and y coordinates, add them together
+        for(int i = 0; i < 4; ++i){
+            xSum += xCoordinates[i];
+            ySum += yCoordinates[i];
+        }
+        
+        // Get the average by dividing by 4
+        double[] cameraCenter = {xSum / 4, ySum / 4, 0};
+        return cameraCenter;
     }
     
     public void end(){
-        LimelightHelpers.setLEDMode_ForceOff("");
         m_LimelightThrottle = 0.0;
         m_LimelightTurn = 0.0;
         isFinished();

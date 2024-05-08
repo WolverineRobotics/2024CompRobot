@@ -10,13 +10,8 @@ import frc.robot.subsystems.IntakeSubsystem;
 public class AutoIntakeCommand extends Command{
 
     private IntakeSubsystem mIntake;
-    // private Debouncer mDebouncer = new Debouncer(0.01); // Wait 0.5 seconds until a true signal is passed
-
-
     public AutoIntakeCommand(IntakeSubsystem intakeSubsystem /* Debouncer mDebouncer */){
         mIntake = intakeSubsystem;
-        // mDebouncer = intakeDebouncer;
-
         addRequirements(intakeSubsystem);
     }
     // Called when the command is initially scheduled.
@@ -26,12 +21,6 @@ public class AutoIntakeCommand extends Command{
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        // if (mDebouncer.calculate(!mIntake.intakeLimitSwitch.get())) {
-        //     mIntake.intakeMotor.set(0);
-        // } else {
-        //     mIntake.intakeMotor.set(1);
-        // }
-
         if (!mIntake.intakeLimitSwitch.get()) {
             Input.driveController.setRumble(RumbleType.kBothRumble, 0);
             Input.opController.setRumble(RumbleType.kBothRumble, 0);
