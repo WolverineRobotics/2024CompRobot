@@ -29,6 +29,7 @@ public class LimelightSubsystem extends ProfiledPIDSubsystem {
     private double tagId = 0;
     
     public LimelightSubsystem(){
+
         super(
            new ProfiledPIDController(Kp, Ki, Kd,
            new TrapezoidProfile.Constraints(
@@ -49,21 +50,13 @@ public class LimelightSubsystem extends ProfiledPIDSubsystem {
         SmartDashboard.putNumber("LL_AprilTag_id", tagId);
     }
 
-    /* DISTANCE CALCULATION 
-       distance = (height of target - height of camera) / tan(mounting angle + angle to target)
-
-       What I'm thinking right now is to somehow pass target height values into this method and calculate an estimated distance...
-       TODO: Get Measurements
-    */
-
-    private double estimatedDistance(double goalHeightMeters){
+    public static double estimatedDistance(double goalHeightInches){
         double tagAngle = LimelightHelpers.getTY("");
 
-        double limelightOffsetAngle = Constants.Positional.limelightMountAngle; // Angular offset vertically
-        double limelightHeightMeters = Constants.Positional.limelightHeight; // Height from ground -> lens
+        double limelightOffsetAngle = 19.5; // Angular offset vertically
+        double limelightHeightInches = Constants.Positional.limelightHeight; // Height from ground -> lens
         double goalAngle = Math.toRadians(limelightOffsetAngle + tagAngle);
-
-        return (goalHeightMeters - limelightHeightMeters) / (Math.tan(goalAngle));
+        return Math.abs(goalHeightInches - limelightHeightInches) / (Math.tan(goalAngle)); // Distance once limelight aligns (in inches)
     }
     
     @Override

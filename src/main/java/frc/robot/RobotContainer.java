@@ -43,14 +43,11 @@ public class RobotContainer {
   private DriveSubsystem m_Drive = new DriveSubsystem();
   private Command m_Drivecommand = new DefaultDriveCommand(m_Drive);
 
-  //private DriveSubsystem limelightDrive = new DriveSubsystem();
-
   /* Noah */
   //private NoahDriveSubsystem m_Noah = new NoahDriveSubsystem();
 
   /* Limelight */
   private LimelightSubsystem m_Limelight = new LimelightSubsystem();
-  // private Command m_LimelightAlignCommand = new LimelightAlignCommand(m_Limelight);
 
   /* Shooter */
   // private ShooterSubsystem m_shooter = new ShooterSubsystem();
@@ -114,10 +111,6 @@ public class RobotContainer {
   public LimelightSubsystem getLimelightSubsystem(){
     return m_Limelight;
   }
-
-  // public DriveSubsystem getLimelightDrive(){
-  //   return limelightDrive;
-  // }
 
   private void configureBindings() {
   }

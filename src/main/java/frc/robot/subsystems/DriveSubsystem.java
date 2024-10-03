@@ -168,15 +168,6 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
   public Pigeon2 GetPigeon(){ return mGyro; } 
   public double GetHeading(){ return mPose.getRotation().getDegrees();}
 
-  // if (DriverStation.getAlliance() == DriverStation.Alliance.Red){
-  //   new DifferentialDrivePoseEstimator(
-  //     m_kinematics, 
-  //     m_gyro.getRotation2d(),
-  //     leftEncoder.getDistance(), 
-  //     rightEncoder.getDistance() 
-  //     m_pose);
-  // }
-
   public void AutoDrive(double speed,double rotation){
       driveTrain.arcadeDrive(speed, rotation);
     }

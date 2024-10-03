@@ -152,9 +152,6 @@ private Command m_autonomousCommand;
       new LimelightAlignCommand(m_robotContainer.getLimelightSubsystem(), m_robotContainer.getDriveSubsystem()).schedule();
 
     }
-    /*if(Input.alignTag()){
-      new LimelightAlignCommand(m_robotContainer.getLimelightSubsystem(), m_robotContainer.getLimelightDrive()).schedule();
-    }*/
   }
   
   @Override
