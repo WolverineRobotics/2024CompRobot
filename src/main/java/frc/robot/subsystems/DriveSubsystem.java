@@ -148,7 +148,7 @@ public class DriveSubsystem extends ProfiledPIDSubsystem {
   // Tele-Op Driving 
   public void ArcadeDrive(){
     // driveTrain.arcadeDrive(Input.getHorizontal() * 0.3f, slew.calculate(Input.getVertical()) * 0.3f);
-    driveTrain.arcadeDrive(Input.getVertical(), Input.getHorizontal() * 0.8f);
+    driveTrain.arcadeDrive(Input.getVertical() * 0.5, Input.getHorizontal() * 0.8f);
   }
 
   // Get Encoder Values
